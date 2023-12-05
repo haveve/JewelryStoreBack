@@ -1,4 +1,5 @@
-﻿using CourseWorkDB.Graphql.Mutation.Product.MaterialInfoCrud;
+﻿using CourseWorkDB.Graphql.Mutation.Product.DicountGrud;
+using CourseWorkDB.Graphql.Mutation.Product.MaterialInfoCrud;
 using CourseWorkDB.Graphql.Mutation.Product.SizeInfoCrudTypes;
 using CourseWorkDB.Graphql.Mutation.Product.SpecificProductInfo;
 using CourseWorkDB.Graphql.Mutation.Product.StoneInfoCrud;
@@ -95,6 +96,13 @@ namespace CourseWorkDB.Graphql.Query.Product
                 {
                     var productId = context.GetArgument<int>("productId");
                     return await productRepository.GetSpecificProductInfoAsync(productId);
+                });
+
+
+           Field<NonNullGraphType<ListGraphType<NonNullGraphType<DiscountGraphType>>>>("get_discounts")
+                .ResolveAsync(async context =>
+                {
+                    return await productRepository.GetDiscountsAsync();
                 });
 
 

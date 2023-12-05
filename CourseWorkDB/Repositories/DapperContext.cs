@@ -1,4 +1,4 @@
-﻿using System.Data.SqlClient;
+﻿using  Microsoft.Data.SqlClient;
 using System.Data;
 using System.ComponentModel;
 using System.Reflection;
@@ -7,6 +7,7 @@ using WebSocketGraphql.Services;
 using System;
 using CourseWorkDB.Model;
 using CourseWorkDB.ViewModel.Size;
+using CourseWork_DB.Helpers;
 
 namespace TimeTracker.Repositories
 {
@@ -26,9 +27,18 @@ namespace TimeTracker.Repositories
             Mapper.SetMapper(typeof(Size));
             Mapper.SetMapper(typeof(SizeInfo));
             Mapper.SetMapper(typeof(StoneInfo));
+            Mapper.SetMapper(typeof(Discount));
+            Mapper.SetMapper(typeof(User));
+            Mapper.SetMapper(typeof(UserPermission));
+
+
+            SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
+            SqlMapper.AddTypeHandler(new TimeOnlyTypeHandler());
+
             SqlMapper.AddTypeHandler(new DateTimeHandler());
 
         }
+
         public IDbConnection CreateConnection()
             => new SqlConnection(_connectionString);
 

@@ -11,6 +11,8 @@ id int identity not null,
 full_name nvarchar(100) not null,
 telephone_number nvarchar(10) not null CHECK(telephone_number like '0[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]'),
 disabled bit null,
+password nvarchar(50) not null,
+salt nvarchar(24) not null,
 
 CONSTRAINT PK_Users_id Primary Key(id),
 CONSTRAINT UQ_Users_telephone_number UNIQUE(telephone_number)
@@ -132,13 +134,14 @@ CONSTRAINT PK_SelectedProducts_id PRIMARY KEY(id)
 --DISCOUNT
 
 CREATE TABLE Discount(
+id int not null identity;
 start date not null,
 [end] date not null,
 product_id int not null,
 [percent] int not null CHECK([percent] <= 100 AND [percent] > 0)
 
 CONSTRAINT FK_Discount_product_id FOREIGN KEY(product_id) REFERENCES Products(id) ON DELETE NO ACTION,
-CONSTRAINT PK_Discount_start_end_product_id PRIMARY KEY(product_id,start,[end]) 
+CONSTRAINT PK_Discount_id PRIMARY KEY(id) 
 );
 
 --STONE INFO

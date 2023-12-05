@@ -9,12 +9,14 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.24" />
     <PackageReference Include="GraphQL" Version="7.6.1" />
+    <PackageReference Include="GraphQL.Authorization" Version="7.0.0" />
     <PackageReference Include="GraphQL.MicrosoftDI" Version="7.6.1" />
     <PackageReference Include="GraphQL.Server.Transports.AspNetCore" Version="7.6.0" />
     <PackageReference Include="GraphQL.Server.Ui.Altair" Version="7.6.0" />
     <PackageReference Include="GraphQL.Server.Ui.Playground" Version="7.6.0" />
     <PackageReference Include="GraphQL.Upload.AspNetCore" Version="3.0.3" />
-    <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+    <PackageReference Include=" Microsoft.Data.SqlClient" Version="5.1.2" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

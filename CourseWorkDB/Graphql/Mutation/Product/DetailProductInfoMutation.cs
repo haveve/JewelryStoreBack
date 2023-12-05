@@ -1,9 +1,11 @@
-﻿using CourseWorkDB.Graphql.Mutation.Product.MaterialInfoCrud;
+﻿using CourseWorkDB.Graphql.Mutation.Product.DicountGrud;
+using CourseWorkDB.Graphql.Mutation.Product.MaterialInfoCrud;
 using CourseWorkDB.Graphql.Mutation.Product.SizeInfoCrudTypes;
 using CourseWorkDB.Graphql.Mutation.Product.SpecificProductInfo;
 using CourseWorkDB.Graphql.Mutation.Product.StoneInfoCrud;
 using CourseWorkDB.Model;
 using CourseWorkDB.Repositories;
+using CourseWorkDB.ViewModel.Discount;
 using CourseWorkDB.ViewModel.Material;
 using CourseWorkDB.ViewModel.Product;
 using CourseWorkDB.ViewModel.Size;
@@ -328,6 +330,33 @@ namespace CourseWorkDB.Graphql.Mutation.Product
                 {
                     var id = context.GetArgument<int>("id");
                     return await productRepository.RemoveSpecificProductInfoAsync(id);
+                });
+
+
+
+            Field<NonNullGraphType<DiscountGraphType>>("add_discount")
+              .Argument<NonNullGraphType<AddDiscountInputGraphType>>("discount")
+              .ResolveAsync(async context =>
+              {
+                  var discount = context.GetArgument<AddDiscount>("discount");
+                  return await productRepository.AddDiscountAsync(discount);
+
+              });
+
+            Field<NonNullGraphType<DiscountGraphType>>("update_discount")
+                .Argument<NonNullGraphType<DiscountInputGraphType>>("discount")
+                .ResolveAsync(async context =>
+                {
+                    var discount = context.GetArgument<Discount>("discount");
+                    return await productRepository.UpdateDiscountAsync(discount);
+                });
+
+            Field<NonNullGraphType<IntGraphType>>("delete_discount")
+                .Argument<NonNullGraphType<IntGraphType>>("id")
+                .ResolveAsync(async context =>
+                {
+                    var id = context.GetArgument<int>("id");
+                    return await productRepository.RemoveDiscountAsync(id);
                 });
         }
     }

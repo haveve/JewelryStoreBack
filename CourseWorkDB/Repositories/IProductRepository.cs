@@ -1,4 +1,5 @@
 ﻿using CourseWorkDB.Model;
+using CourseWorkDB.ViewModel.Discount;
 using CourseWorkDB.ViewModel.Material;
 using CourseWorkDB.ViewModel.Product;
 using CourseWorkDB.ViewModel.Size;
@@ -123,5 +124,12 @@ namespace CourseWorkDB.Repositories
         Task<AddSpecificProductInfo> AddSpecificProductInfoAsync(AddSpecificProductInfo addSpecificProductInfo);
         Task<AddSpecificProductInfo> UpdateSpecificProductInfoAsync(AddSpecificProductInfo addSpecificProductInfo);
         Task<int> RemoveSpecificProductInfoAsync(int specificProductInfoId);
+
+        //Discount 
+
+        Task<IEnumerable<Discount>> GetDiscountsAsync();
+        Task<Discount> AddDiscountAsync(AddDiscount discount);
+        Task<Discount> UpdateDiscountAsync(Discount discount);
+        Task<int> RemoveDiscountAsync(int discountId);
     }
 }

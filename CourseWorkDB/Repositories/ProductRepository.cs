@@ -1,4 +1,5 @@
 ﻿using CourseWorkDB.Model;
+using CourseWorkDB.ViewModel.Discount;
 using CourseWorkDB.ViewModel.Material;
 using CourseWorkDB.ViewModel.Product;
 using CourseWorkDB.ViewModel.Size;
@@ -842,6 +843,40 @@ namespace CourseWorkDB.Repositories
 
         //Discount
 
+        public async Task<IEnumerable<Discount>> GetDiscountsAsync()
+        {
+            string query = @"select start,[end],product_id,[percent],id from discount";
 
+            using var connection = _dapperContext.CreateConnection();
+            return await connection.QueryAsync<Discount>(query);
+        }
+
+        public async Task<Discount> AddDiscountAsync(AddDiscount discount)
+        {
+            string query = "INSERT INTO Discount (start,[end],product_id,[percent]) OUTPUT inserted.id VALUES(@Start,@End,@ProductId,@Percent)";
+            using var connection = _dapperContext.CreateConnection();
+
+            var id = await connection.QuerySingleAsync<int>(query, discount).ConfigureAwait(false);
+
+            return new Discount(discount.Start,discount.End,discount.ProductId,discount.Percent,id);
+        }
+
+        public async Task<Discount> UpdateDiscountAsync(Discount discount)
+        {
+            string query = "UPDATE Discount SET start = @Start,[end] = @End,product_id = @ProductId,[percent] = @Percent WHERE id = @Id";
+            using var connection = _dapperContext.CreateConnection();
+            await connection.ExecuteAsync(query, discount).ConfigureAwait(false);
+
+            return discount;
+        }
+
+        public async Task<int> RemoveDiscountAsync(int discountId)
+        {
+            using var connection = _dapperContext.CreateConnection();
+            string query = "DELETE Discount OUTPUT deleted.id WHERE id = @discountId";
+
+            return await connection.QuerySingleAsync<int>(query, new { discountId }).ConfigureAwait(false);
+
+        }
     }
 }
