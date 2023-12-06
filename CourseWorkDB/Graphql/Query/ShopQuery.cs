@@ -1,4 +1,5 @@
-﻿using CourseWorkDB.Graphql.Query.Product;
+﻿using CourseWorkDB.Graphql.Mutation.UserProductRelation;
+using CourseWorkDB.Graphql.Query.Product;
 using CourseWorkDB.Graphql.Query.User;
 using GraphQL;
 using GraphQL.Types;
@@ -17,6 +18,9 @@ namespace CourseWorkDB.Graphql.Query
 
             Field<UserQuery>("users")
                 .Resolve(context => context).AuthorizeWithPolicy("UserManage");
+
+            Field<UserProductRelationQuery>("user_product")
+                .Resolve(context => context).AuthorizeWithPolicy("Authorized");
         }
     }
 }

@@ -25,8 +25,7 @@ namespace CourseWorkDB.Repositories
             DECLARE @InsertedID int = (SELECT TOP 1 ID FROM @ID);
             INSERT INTO UserPermission(user_id,product_manage,user_manage) VALUES(@InsertedID,@ProductManage,@UserManage)
             SELECT @InsertedID
-            COMMIT;"
-            ;
+            COMMIT;";
 
             using var connection = _dapperContext.CreateConnection();
             user.Id = await connection.QuerySingleAsync<int>(query, new

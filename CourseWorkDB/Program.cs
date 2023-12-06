@@ -1,3 +1,4 @@
+using CourseWorkDB;
 using CourseWorkDB.Graphql.Schemas;
 using CourseWorkDB.Repositories;
 using FileUploadSample;
@@ -12,8 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<IUploadRepository,UploadRepository>();
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddSingleton<IProductRepository,ProductRepository>();
-
 builder.Services.AddSingleton<IUserRepository, UserRepository>();
+builder.Services.AddSingleton<IUserProductRelation, UserProductRelation>();
 
 builder.Services.AddSingleton<Schema, ShopSchema>(service =>
 {
@@ -50,6 +51,7 @@ builder.Services.AddGraphQL(c =>
                                       {
                                           setting.AddPolicy("ProductManage", p => p.RequireClaim("ProductManage", "True"));
                                           setting.AddPolicy("UserManage", p => p.RequireClaim("UserManage", "True"));
+                                          setting.AddPolicy("Authorized", p => p.RequireAuthenticatedUser());   
                                       })
     .AddErrorInfoProvider(opt => opt.ExposeExceptionDetails = true)
     .AddSystemTextJson();

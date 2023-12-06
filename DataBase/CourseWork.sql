@@ -94,13 +94,8 @@ CONSTRAINT PK_Product_id Primary Key(id)
 
 CREATE TABLE History(
 id uniqueidentifier not null,
-count int not null,
 date datetime2(0),
-user_id int not null,
-product_id int not null,
-
-CONSTRAINT FK_History_user_id FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE NO ACTION,
-CONSTRAINT FK_History_product_id FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE NO ACTION,
+total_cost decimal(10,2) not null
 
 CONSTRAINT PK_History_id PRIMARY KEY(id)
 )
@@ -122,13 +117,15 @@ last_status_changed datetime2(0),
 
 status_id int not null,
 user_id int not null,
-product_id int not null
+product_id int not null,
+size_id int not null,
 
 CONSTRAINT FK_SelectedProducts_user_id FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE NO ACTION,
 CONSTRAINT FK_SelectedProducts_product_id FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE NO ACTION,
 CONSTRAINT FK_SelectedProducts_status_id FOREIGN KEY (status_id) REFERENCES SelectedProductsStatus(id) ON DELETE NO ACTION,
+CONSTRAINT FK_SelectedProducts_size_id FOREIGN KEY(size_id) REFERENCES Size(id) ON DELETE NO ACTION,
 
-CONSTRAINT PK_SelectedProducts_id PRIMARY KEY(id)
+CONSTRAINT PK_SelectedProducts_id PRIMARY KEY(id,size_id,product_id)
 )
 
 --DISCOUNT

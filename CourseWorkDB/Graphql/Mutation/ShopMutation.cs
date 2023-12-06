@@ -1,5 +1,6 @@
 ﻿using CourseWorkDB.Graphql.Mutation.Product;
 using CourseWorkDB.Graphql.Mutation.User;
+using CourseWorkDB.Graphql.Mutation.UserProductRelation;
 using FileUploadSample;
 using GraphQL;
 using GraphQL.Types;
@@ -19,6 +20,10 @@ namespace CourseWorkDB.Graphql.Mutation
 
             Field<UserMutation>("user")
                 .Resolve(context => context).AuthorizeWithPolicy("UserManage");
+
+            Field<UserProductRelationMutation>("user_product")
+                .Resolve(context => context).AuthorizeWithPolicy("Authorized");
+
 
         }
     }

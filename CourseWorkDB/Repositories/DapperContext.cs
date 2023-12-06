@@ -30,7 +30,7 @@ namespace TimeTracker.Repositories
             Mapper.SetMapper(typeof(Discount));
             Mapper.SetMapper(typeof(User));
             Mapper.SetMapper(typeof(UserPermission));
-
+            Mapper.SetMapper(typeof(History));
 
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             SqlMapper.AddTypeHandler(new TimeOnlyTypeHandler());

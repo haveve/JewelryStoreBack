@@ -31,7 +31,7 @@ namespace CourseWorkDB.Graphql.Query
 
                      var claims = new List<Claim>
                      {
-                        new Claim("Id", fullUser.Id.ToString()),
+                        new Claim("UserId", fullUser.Id.ToString()),
                         new Claim("ProductManage", fullUser.Permissions.ProductManage.ToString()),
                         new Claim("UserManage", fullUser.Permissions.UserManage.ToString()),
                      };
