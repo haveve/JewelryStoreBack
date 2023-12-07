@@ -26,7 +26,7 @@ namespace FileUploadSample
                 throw new InvalidDataException("File is not a image");
             }
 
-            var id = Guid.NewGuid().ToString().Replace('-', (char)_rnd.Next());
+            var id = Guid.NewGuid().ToString().Replace('-', (char)_rnd.Next(32, 127));
             var categoryStrId = categoryId.ToString();
             var categoryFolderPath = Path.Combine(_uploadDirectory, categoryStrId);
 
