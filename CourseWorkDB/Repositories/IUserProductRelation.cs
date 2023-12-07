@@ -1,4 +1,5 @@
 ﻿using CourseWorkDB.Model;
+using CourseWorkDB.ViewModel.History;
 using System.Data;
 using TimeTracker.Repositories;
 
@@ -14,10 +15,12 @@ namespace CourseWorkDB.Repositories
         Task<IEnumerable<SelectedProduct>> GetSelectedProductsAsync(int userId, int statuId);
         Task<SelectedProduct> AddSelectedProductAsync(SelectedProduct selectedProduct, bool minSize = false);
         Task<SelectedProduct> UpdateProductAsync(SelectedProduct selectedProduct);
-        Task<Guid> RemoveSelectedProductAsync(Guid Id);
+        Task<Guid> RemoveSelectedProductAsync(Guid Id,int userId);
 
         Task<IEnumerable<History>> GetUserHistoryAsync(int userId);
+        Task<UpdateUserHistory> UpdateUserHistoryAsync(UpdateUserHistory data);
+
         Task<string> DeclineOrderAsync(Guid orderId, int userId, bool userRollBack);
-        Task<string> CreateOrderAsync(IEnumerable<int> ProductIds);
+        Task<string> CreateOrderAsync(IEnumerable<Guid> ProductIds,string address);
     }
 }

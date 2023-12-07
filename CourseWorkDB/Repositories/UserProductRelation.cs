@@ -1,5 +1,6 @@
 ﻿using CourseWorkDB.Model;
 using CourseWorkDB.Repositories;
+using CourseWorkDB.ViewModel.History;
 using Dapper;
 using Microsoft.AspNetCore.Http;
 using System.Data;
@@ -51,11 +52,22 @@ namespace CourseWorkDB
             return await connection.QueryAsync<SelectedProduct>(query, new {userId,statuId}).ConfigureAwait(false);
         }
 
-        public async Task<Guid> RemoveSelectedProductAsync(Guid Id)
+        public async Task<Guid> RemoveSelectedProductAsync(Guid Id, int userId)
         {
-            string query = $"DELETE FROM SelectedProducts OUTPUT deleted.id where id = @Id AND status_id in ({SelectedStatus.Beloved}{SelectedStatus.InBucket})";
+            string query = $"DELETE FROM SelectedProducts OUTPUT deleted.id where id = @Id AND user_id = @userId AND status_id in ({(int)SelectedStatus.Beloved},{(int)SelectedStatus.InBucket})";
             using var connection = _dapperContext.CreateConnection();
-            return await connection.QuerySingleAsync<Guid>(query, new { Id }).ConfigureAwait(false);
+
+            var data = Guid.Empty;
+            try
+            {
+                data = await connection.QuerySingleAsync<Guid>(query, new { Id, userId }).ConfigureAwait(false);
+            }
+            catch
+            {
+
+            }
+
+            return data; 
         }
 
         public async Task<SelectedProduct> AddSelectedProductAsync(SelectedProduct selectedProduct,bool minSize = false)
@@ -104,15 +116,25 @@ namespace CourseWorkDB
         public async Task<IEnumerable<History>> GetUserHistoryAsync(int userId)
         {
             using var connection = _dapperContext.CreateConnection();
-            string query = @"SELECT h.total_cost,sp.count,p.name,p.image,p.disabled,p.category_id FROM History as h
+            string query = @"SELECT h.id,h.total_cost,h.address,h.date,sp.count,p.name,p.image,p.disabled,p.category_id FROM History as h
             JOIN SelectedProducts as sp
             ON sp.user_id = @userId AND h.id = sp.id
             JOIN Size as s
             ON sp.size_id = s.id
             JOIN Products as p
-            ON sp.product_id = p.id";
+            ON sp.product_id = p.id
+            ORDER BY h.date DESC";
 
             return await connection.QueryAsync<History>(query, new { userId }).ConfigureAwait(false);
+        }
+
+        public async Task<UpdateUserHistory> UpdateUserHistoryAsync(UpdateUserHistory data)
+        {
+            using var connection = _dapperContext.CreateConnection();
+            string query = @"UPDATE History SET address = @Address WHERE id = @Id";
+
+            await connection.ExecuteAsync(query, data).ConfigureAwait(false);
+            return data;
         }
 
         public async Task<string> DeclineOrderAsync(Guid orderId,int userId, bool userRollBack)
@@ -128,7 +150,7 @@ namespace CourseWorkDB
             }, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<string> CreateOrderAsync(IEnumerable<int> ProductIds)
+        public async Task<string> CreateOrderAsync(IEnumerable<Guid> ProductIds,string address)
         {
             string procedure = "USP_COMMIT_BOUGHT";
             using var connection = _dapperContext.CreateConnection();
@@ -139,14 +161,15 @@ namespace CourseWorkDB
 
             foreach(var el in ProductIds)
             {
-                dt.Rows.Add($"Id_{el}");
+                dt.Rows.Add($"{el}");
             }
 
             return await connection.QuerySingleAsync<string>(procedure, new
             {
                 OrderId = Guid.NewGuid(),
-                OrderStatusId = (int)SelectedStatus.Ordered,
-                ProductIds = dt.AsTableValuedParameter("ProductStatusIds")
+                OrderedStatusId = (int)SelectedStatus.Ordered,
+                ProductIds = dt.AsTableValuedParameter("ProductStatusIds"),
+                Address = address
             }, commandType: CommandType.StoredProcedure);
         }
     }

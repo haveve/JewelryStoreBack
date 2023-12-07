@@ -2,6 +2,7 @@
 using CourseWorkDB.Helpers;
 using CourseWorkDB.Model;
 using CourseWorkDB.Repositories;
+using CourseWorkDB.ViewModel.History;
 using GraphQL;
 using GraphQL.Types;
 
@@ -50,12 +51,23 @@ namespace CourseWorkDB.Graphql.Mutation.UserProductRelation
                     return await userProductRelation.UpdateProductAsync(product); 
                 });
 
+            Field<NonNullGraphType<GuidGraphType>>("remove_selected_product")
+                .Argument<NonNullGraphType<GuidGraphType>>("id")
+                .ResolveAsync(async context =>
+                {
+                    var id = context.GetArgument<Guid>("id");
+                    return await userProductRelation.RemoveSelectedProductAsync(id,
+                        context.User!.GetUserId()); 
+                });
+
             Field<NonNullGraphType<StringGraphType>>("create_order")
-               .Argument<NonNullGraphType<ListGraphType<NonNullGraphType<IntGraphType>>>>("Ids")
+               .Argument<NonNullGraphType<ListGraphType<NonNullGraphType<GuidGraphType>>>>("Ids")
+               .Argument<NonNullGraphType<StringGraphType>>("address")
                .ResolveAsync(async context =>
                {
-                   var Ids = context.GetArgument<IEnumerable<int>>("Ids");
-                   return await userProductRelation.CreateOrderAsync(Ids);
+                   var Ids = context.GetArgument<IEnumerable<Guid>>("Ids");
+                   var address = context.GetArgument<string>("address");
+                   return await userProductRelation.CreateOrderAsync(Ids, address);
                });
 
             Field<NonNullGraphType<StringGraphType>>("decline_order")
@@ -104,6 +116,15 @@ namespace CourseWorkDB.Graphql.Mutation.UserProductRelation
                 {
                     var data = context.GetArgument<SelectedProductsStatus>("productStatus");
                     return await userProductRelation.UpdateSelectedProductsStatusAsync(data);
+
+                }).AuthorizeWithPolicy("UserManage");
+
+            Field<NonNullGraphType<UpdateUserHistoryGraphType>>("update_order")
+                .Argument<NonNullGraphType<UpdateUserHistoryInputGraphType>>("data")
+                .ResolveAsync(async context =>
+                {
+                    var data = context.GetArgument<UpdateUserHistory>("data");
+                    return await userProductRelation.UpdateUserHistoryAsync(data);
 
                 }).AuthorizeWithPolicy("UserManage");
 

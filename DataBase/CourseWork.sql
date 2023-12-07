@@ -95,7 +95,8 @@ CONSTRAINT PK_Product_id Primary Key(id)
 CREATE TABLE History(
 id uniqueidentifier not null,
 date datetime2(0),
-total_cost decimal(10,2) not null
+total_cost decimal(10,2) not null,
+address nvarchar(200) not null
 
 CONSTRAINT PK_History_id PRIMARY KEY(id)
 )

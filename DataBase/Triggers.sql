@@ -1,4 +1,6 @@
 go
+
+
 CREATE TRIGGER USP_SelectedProducts_After_Update 
 ON SelectedProducts
 AFTER UPDATE
@@ -13,6 +15,8 @@ SELECT d.id FROM deleted as d
 JOIN inserted as i
 ON d.id = i.id AND i.last_status_changed <> d.last_status_changed
 
+open toLastStatusChange
+
 FETCH NEXT FROM toLastStatusChange INTO @Id
 
 WHILE @@FETCH_STATUS = 0
@@ -21,5 +25,6 @@ BEGIN
 	FETCH NEXT FROM toLastStatusChange INTO @Id
 END
 
-
+CLOSE toLastStatusChange
+DEALLOCATE toLastStatusChange
 go

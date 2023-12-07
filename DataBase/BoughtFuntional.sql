@@ -9,11 +9,11 @@ CREATE TYPE ProductStatusIds AS TABLE
 GO
 
 
-
 CREATE PROCEDURE USP_COMMIT_BOUGHT
 (@ProductIds ProductStatusIds READONLY,
 @OrderId uniqueidentifier ,
-@OrderedStatusId int )
+@OrderedStatusId int,
+@Address nvarchar(200))
 AS
 SET XACT_ABORT ON
 SET NOCOUNT ON
@@ -23,7 +23,7 @@ DECLARE @Now DATETIME2(0) = GETUTCDATE()
 BEGIN TRANSACTION;
 BEGIN TRY
 
-INSERT INTO HISTORY(id,date,total_cost) VALUES(@OrderId,@Now,0)
+INSERT INTO HISTORY(id,date,total_cost,address) VALUES(@OrderId,@Now,0,@Address)
 
 END TRY
 BEGIN CATCH  
@@ -42,10 +42,11 @@ BEGIN TRY
 	declare @SizeId int
 
 	declare idsCursor CURSOR for SELECT id from @ProductIds
+	
 	OPEN idsCursor
 
-FETCH NEXT FROM idsCursor INTO
-@Id
+	FETCH NEXT FROM idsCursor INTO
+	@Id
 
 DECLARE @ProductCost decimal(10,2)
 DECLARE @BoughtCount int 
@@ -76,7 +77,7 @@ WHILE @@FETCH_STATUS = 0
 			END
 
 			UPDATE HISTORY set total_cost += @ProductCost WHERE id = @OrderId
-			UPDATE SelectedProducts SET last_status_changed = @Now , id = @OrderId,status_id = @OrderedStatusId WHERE id = @Id
+			UPDATE SelectedProducts SET id = @OrderId,status_id = @OrderedStatusId WHERE id = @Id
 		BEGIN TRY
 			UPDATE SizeInfo SET count -= @BoughtCount WHERE size_id = @SizeId AND product_id = @ProductId
 		END TRY
@@ -97,7 +98,7 @@ BEGIN CATCH
     IF @@TRANCOUNT > 0  
         ROLLBACK TRANSACTION;  
 	SELECT 'Unknown error'
-	DELETE FROM History WHERE id = @OrderId
+	DELETE FROM History WHERE id = @OrderId;
 END CATCH; 
   
 CLOSE idsCursor
@@ -168,7 +169,7 @@ BEGIN TRY
 	DELETE FROM SelectedProducts
 	WHERE id = @OrderId
 	
-	SELECT @OrderId
+	SELECT convert(nvarchar(36), @OrderId)
 END TRY
 BEGIN CATCH  
     IF @@TRANCOUNT > 0  
@@ -189,13 +190,12 @@ VALUES('479a4281-48ce-4489-95c7-053b6b98a2ab',2,GETUTCDATE(),2,4,7,1)
 
 DECLARE @Ids as ProductStatusIds
 
-INSERT INTO @Ids(id) VALUES('379fa126-92d5-41b6-bccd-4bf93fc97e6a')
+INSERT INTO @Ids(id) VALUES('479a4281-48ce-4489-95c7-053b6b98a2ab')
 
-EXEC USP_COMMIT_BOUGHT @ProductIds = @Ids, @OrderId = '479a4281-48ce-4489-95c7-053b6b98a2ab',@OrderedStatusId = 3
+EXEC USP_COMMIT_BOUGHT @ProductIds = @Ids, @OrderId = '379fa126-92d5-41b6-bccd-4bf93fc97e6a',@OrderedStatusId = 3, @Address = 'dsfsd'
 
 select * from SelectedProducts
 select * from SizeInfo
 SELECT * FROM History
 
-
-exec USP_RALLBACK_BOUGHT @OrderId = '479a4281-48ce-4489-95c7-053b6b98a2ab',@UserRollBack = 0,@UserId = 4
+exec USP_RALLBACK_BOUGHT @OrderId = '379fa126-92d5-41b6-bccd-4bf93fc97e6a',@UserRollBack = 1,@UserId = 4

@@ -13,6 +13,9 @@ namespace CourseWorkDB.Graphql.Query.UserProductRelation
             Field(el => el.CategoryId);
             Field(el => el.Image);
             Field(el => el.Count);
+            Field(el => el.Address);
+            Field(el => el.Date);
+            Field(el => el.Id);
         }
     }
 }
