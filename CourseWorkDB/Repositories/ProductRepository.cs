@@ -98,7 +98,7 @@ namespace CourseWorkDB.Repositories
                         forParams.AppendFormat("{0},", color);
                     }
 
-                    query.AppendFormat(@" {1} m.material_color_id in ({0})"
+                    query.AppendFormat(@" m.material_color_id in ({0})"
                     , forParams.ToString().TrimEnd(trimSymbol));
                     forParams.Clear();
                 }
@@ -123,7 +123,7 @@ namespace CourseWorkDB.Repositories
             || productSort.StoneTypes is not null)
             {
                 query.Append(@"JOIN StoneInfo as si
-                            ON p.id = si.product_id AND si.stone_shape_id in (1,2,3,4,5) AND si.stone_color_id in (1,2,3,4,5)
+                            ON p.id = si.product_id AND 
                          ");
 
                 if (productSort.StoneTypes is not null)
@@ -135,7 +135,7 @@ namespace CourseWorkDB.Repositories
 
                     query.AppendFormat(@" si.stone_type_id in ({0}) {1}"
                     , forParams.ToString().TrimEnd(trimSymbol)
-                    , productSort.StoneShapes is not null ? "AND " : string.Empty);
+                    , productSort.StoneShapes is not null|| productSort.StoneColors is not null ? "AND " : string.Empty);
 
                     forParams.Clear();
                 }
@@ -172,7 +172,7 @@ namespace CourseWorkDB.Repositories
             if (productSort.LockTypes is not null
                || productSort.ShapeTypes is not null) 
             { 
-                query.Append(" JOIN SpecificProductInfo as spi ON p.id = spi.id AND spi.lock_type_id ");
+                query.Append(" JOIN SpecificProductInfo as spi ON p.id = spi.id AND  ");
 
                 if (productSort.LockTypes is not null)
                 {
@@ -468,7 +468,7 @@ namespace CourseWorkDB.Repositories
                 mInf.Material = m;
                 mInf.MaterialColor = mColor;
                 return mInf;
-            }, new { productId }, splitOn: "name");
+            }, new { productId }, splitOn: "id");
         }
 
         public async Task<IEnumerable<AddMaterialInfo>> AddMaterialInfosAsync(IEnumerable<AddMaterialInfo> materialInfos)

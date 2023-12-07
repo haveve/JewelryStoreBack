@@ -33,7 +33,8 @@ CREATE TABLE LockType(
 id int not null,
 name nvarchar(50) not null,
 
-CONSTRAINT PK_LockType_id PRIMARY KEY(id)
+CONSTRAINT PK_LockType_id PRIMARY KEY(id),
+CONSTRAINT UQ_LockType_name UNIQUE(name)
 )
 
 
@@ -41,7 +42,8 @@ CREATE TABLE ShapeType(
 id int not null,
 name nvarchar(50) not null,
 
-CONSTRAINT PK_ShapeType_id PRIMARY KEY(id)
+CONSTRAINT PK_ShapeType_id PRIMARY KEY(id),
+CONSTRAINT UQ_ShapeType_name UNIQUE(name)
 )
 
 CREATE TABLE SpecificProductInfo(
@@ -64,14 +66,16 @@ id int not null,
 name nvarchar(100) not null,
 disabled bit null,
 
-CONSTRAINT PK_ProductCreator_id Primary Key(id)
+CONSTRAINT PK_ProductCreator_id Primary Key(id),
+CONSTRAINT UQ_ProductCreator_name UNIQUE(name)
 );
 
 CREATE TABLE ProductCategory(
 id int not null,
 name nvarchar(100) not null
 
-CONSTRAINT PK_ProductCategory_id Primary Key(id)
+CONSTRAINT PK_ProductCategory_id Primary Key(id),
+CONSTRAINT UQ_ProductCategory_name UNIQUE(name)
 );
 
 CREATE TABLE Products(
@@ -87,6 +91,7 @@ specific_product_info_id int null,
 CONSTRAINT FK_Products_creator_id FOREIGN KEY (creator_id) REFERENCES ProductCreator(id) ON DELETE NO ACTION,
 CONSTRAINT FK_Products_category_id FOREIGN KEY (category_id) REFERENCES ProductCategory(id) ON DELETE SET NULL,
 CONSTRAINT FK_Products_specific_product_info_id FOREIGN KEY(specific_product_info_id) REFERENCES SpecificProductInfo(id) ON DELETE SET NULL,
+CONSTRAINT UQ_Products_name UNIQUE(name),
 CONSTRAINT PK_Product_id Primary Key(id)
 )
 
@@ -107,7 +112,8 @@ CREATE TABLE SelectedProductsStatus(
 id int not null,
 name nvarchar(50) not null
 
-CONSTRAINT PK_SelectedProductsStatus_id PRIMARY KEY(id)
+CONSTRAINT PK_SelectedProductsStatus_id PRIMARY KEY(id),
+CONSTRAINT UQ_SelectedProductsStatus_name UNIQUE(name)
 )
 
 
@@ -139,6 +145,7 @@ product_id int not null,
 [percent] int not null CHECK([percent] <= 100 AND [percent] > 0)
 
 CONSTRAINT FK_Discount_product_id FOREIGN KEY(product_id) REFERENCES Products(id) ON DELETE NO ACTION,
+CONSTRAINT UQ_Discount_product_time UNIQUE(product_id,start,[end])
 CONSTRAINT PK_Discount_id PRIMARY KEY(id) 
 );
 
@@ -147,7 +154,8 @@ CREATE TABLE StoneColor(
 id int not null,
 name nvarchar(50) not null,
 
-CONSTRAINT PK_StoneColor_id PRIMARY KEY(id)
+CONSTRAINT PK_StoneColor_id PRIMARY KEY(id),
+CONSTRAINT UQ_StoneColor_name UNIQUE(name)
 );
 
 
@@ -155,14 +163,18 @@ CREATE TABLE StoneType(
 id int not null,
 name nvarchar(50) not null,
 
-CONSTRAINT PK_StoneType_id PRIMARY KEY(id)
+CONSTRAINT PK_StoneType_id PRIMARY KEY(id),
+CONSTRAINT UQ_StoneType_name UNIQUE(name)
+
 );
 
 CREATE TABLE StoneShape(
 id int not null,
 name nvarchar(50) not null,
 
-CONSTRAINT PK_StoneShape_id PRIMARY KEY(id)
+CONSTRAINT PK_StoneShape_id PRIMARY KEY(id),
+CONSTRAINT UQ_StoneShape_name UNIQUE(name)
+
 );
 
 CREATE TABLE StoneInfo(
@@ -188,20 +200,23 @@ CREATE TABLE MaterialColor(
 id int not null,
 name nvarchar(50) not null,
 
-CONSTRAINT PK_MaterialColor_id PRIMARY KEY(id)
+CONSTRAINT PK_MaterialColor_id PRIMARY KEY(id),
+CONSTRAINT UQ_MaterialColor_name UNIQUE(name)
 )
 
 CREATE TABLE Material(
 id int not null,
 name nvarchar(50) not null,
 
-CONSTRAINT PK_Material_id PRIMARY KEY(id)
+CONSTRAINT PK_Material_id PRIMARY KEY(id),
+CONSTRAINT UQ_Material_name UNIQUE(name)
+
 );
 
 CREATE TABLE MaterialInfo(
 product_id int not null,
 material_id int not null,
-material_color_idint not null,
+material_color_id int not null,
 [percent] int not null,
 
 CONSTRAINT FK_MaterialInfo_material_id FOREIGN KEY (material_id) REFERENCES Material(id) ON DELETE NO ACTION,

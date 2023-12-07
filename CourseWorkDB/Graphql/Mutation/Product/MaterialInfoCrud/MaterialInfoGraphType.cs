@@ -9,7 +9,7 @@ namespace CourseWorkDB.Graphql.Mutation.Product.MaterialInfoCrud
         {
             Field(el => el.Percent);
             Field(el => el.Material,type: typeof(MaterialGraphType));
-            Field(el => el.MaterialColor, type: typeof(MaterialGraphType));
+            Field(el => el.MaterialColor, type: typeof(MaterialColorGraphType));
         }
     }
 }
