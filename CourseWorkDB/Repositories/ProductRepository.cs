@@ -172,7 +172,7 @@ namespace CourseWorkDB.Repositories
             if (productSort.LockTypes is not null
                || productSort.ShapeTypes is not null) 
             { 
-                query.Append(" JOIN SpecificProductInfo as spi ON p.id = spi.id AND  ");
+                query.Append(" JOIN SpecificProductInfo as spi ON p.specific_product_info_id = spi.id AND  ");
 
                 if (productSort.LockTypes is not null)
                 {
@@ -794,6 +794,23 @@ namespace CourseWorkDB.Repositories
 
 
         //Specific Product Info
+
+        public async Task<IEnumerable<SpecifictProductInfo>> GetSpecificProductInfosAsync()
+        {
+            string query = @"SELECT spi.id,lt.id,lt.name,st.id,st.name FROM SpecificProductInfo as spi
+                            JOIN LockType as lt
+                            ON spi.lock_type_id = lt.id
+                            JOIN ShapeType as st
+                            ON spi.shape_type_id = st.id";
+
+            using var connection = _dapperContext.CreateConnection();
+            return (await connection.QueryAsync<SpecifictProductInfo, LockType, ShapeType, SpecifictProductInfo>(query, (spi, lt, st) =>
+            {
+                spi.Shape = st;
+                spi.Lock = lt;
+                return spi;
+            }));
+        }
 
         public async Task<SpecifictProductInfo?> GetSpecificProductInfoAsync(int productId)
         {

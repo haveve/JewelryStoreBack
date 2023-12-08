@@ -183,7 +183,7 @@ stone_type_id int not null,
 stone_shape_id int not null,
 stone_color_id int not null,
 
-weight_carat int not null,
+weight_carat decimal(4,1) not null,
 count int not null,
 
 CONSTRAINT FK_StoneInfo_stone_type_id FOREIGN KEY (stone_type_id) REFERENCES StoneType(id) ON DELETE NO ACTION,
@@ -191,7 +191,7 @@ CONSTRAINT FK_StoneInfo_product_id FOREIGN KEY (product_id) REFERENCES Products(
 CONSTRAINT FK_StoneInfo_stone_shape_id FOREIGN KEY (stone_shape_id) REFERENCES StoneShape(id) ON DELETE NO ACTION,
 CONSTRAINT FK_StoneInfo_stone_color_id FOREIGN KEY (stone_color_id) REFERENCES StoneColor(id) ON DELETE NO ACTION,
 
-CONSTRAINT PK_StoneInfo_product_stone_t_stone_s_ids PRIMARY KEY(product_id,stone_type_id,stone_shape_id,stone_color_id)
+CONSTRAINT PK_StoneInfo_product_stone_t_stone_s_ids PRIMARY KEY(product_id,stone_type_id,stone_shape_id,stone_color_id,weight_carat)
 )
 
 --Material Info

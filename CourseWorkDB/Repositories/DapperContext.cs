@@ -31,6 +31,8 @@ namespace TimeTracker.Repositories
             Mapper.SetMapper(typeof(User));
             Mapper.SetMapper(typeof(UserPermission));
             Mapper.SetMapper(typeof(History));
+            Mapper.SetMapper(typeof(SelectedProduct));
+
 
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             SqlMapper.AddTypeHandler(new TimeOnlyTypeHandler());

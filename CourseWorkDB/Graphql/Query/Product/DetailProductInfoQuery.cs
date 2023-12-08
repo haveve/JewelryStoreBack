@@ -90,7 +90,7 @@ namespace CourseWorkDB.Graphql.Query.Product
                     return await productRepository.GetStoneTypesAsync();
                 });
 
-            Field<NonNullGraphType<ListGraphType<NonNullGraphType<SpecificProductInfoGraphType>>>>("get_spec_info")
+            Field<NonNullGraphType<SpecificProductInfoGraphType>>("get_spec_info")
                 .Argument<NonNullGraphType<IntGraphType>>("productId")
                 .ResolveAsync(async context =>
                 {
@@ -99,7 +99,14 @@ namespace CourseWorkDB.Graphql.Query.Product
                 });
 
 
-           Field<NonNullGraphType<ListGraphType<NonNullGraphType<DiscountGraphType>>>>("get_discounts")
+            Field<NonNullGraphType<ListGraphType<NonNullGraphType<SpecificProductInfoGraphType>>>>("get_spec_infos")
+                .ResolveAsync(async context =>
+                {
+                    return await productRepository.GetSpecificProductInfosAsync();
+                });
+
+
+            Field<NonNullGraphType<ListGraphType<NonNullGraphType<DiscountGraphType>>>>("get_discounts")
                 .ResolveAsync(async context =>
                 {
                     return await productRepository.GetDiscountsAsync();

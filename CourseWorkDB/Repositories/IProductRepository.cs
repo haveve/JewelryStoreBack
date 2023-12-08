@@ -124,6 +124,7 @@ namespace CourseWorkDB.Repositories
         Task<AddSpecificProductInfo> AddSpecificProductInfoAsync(AddSpecificProductInfo addSpecificProductInfo);
         Task<AddSpecificProductInfo> UpdateSpecificProductInfoAsync(AddSpecificProductInfo addSpecificProductInfo);
         Task<int> RemoveSpecificProductInfoAsync(int specificProductInfoId);
+        Task<IEnumerable<SpecifictProductInfo>> GetSpecificProductInfosAsync();
 
         //Discount 
 

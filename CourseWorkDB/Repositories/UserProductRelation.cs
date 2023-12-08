@@ -46,8 +46,11 @@ namespace CourseWorkDB
 
         public async Task<IEnumerable<SelectedProduct>> GetSelectedProductsAsync(int userId, int statuId)
         {
-            string query = "SELECT id,count,status_id,user_id,product_id,size_id FROM SelectedProducts where user_id = @userId AND status_id = @statuId";
-
+            string query = @"SELECT sp.id,sp.count,sp.status_id,sp.user_id,sp.product_id,sp.size_id,
+            IIF((sf.count - sp.count >= 0) or (sp.count = 0 and sp.count > 0),1,0) as present FROM SelectedProducts as sp
+            LEFT JOIN SizeInfo AS sf ON sf.product_id = sp.product_id AND sf.size_id = sp.size_id
+            where user_id = @userId AND status_id = @statuId";
+                            
             using var connection = _dapperContext.CreateConnection();
             return await connection.QueryAsync<SelectedProduct>(query, new {userId,statuId}).ConfigureAwait(false);
         }
@@ -72,11 +75,11 @@ namespace CourseWorkDB
 
         public async Task<SelectedProduct> AddSelectedProductAsync(SelectedProduct selectedProduct,bool minSize = false)
         {
-            string size = minSize ? "SELECT MIN(id) From Size":"@SizeId";
+            string size = minSize ? "SELECT MIN(size_id) From SizeInfo WHERE product_id = @ProductId":"@SizeId";
 
             string query = @$"
             INSERT INTO SelectedProducts(id,count,last_status_changed,status_id,user_id,product_id,size_id)
-            VALUES(@Id,@Count,@now,@StatusId,@UserId,@ProductId,{size})";
+            VALUES(@Id,@Count,@now,@StatusId,@UserId,@ProductId,({size}))";
 
             using var connection = _dapperContext.CreateConnection();
             await connection.ExecuteAsync(query,new
