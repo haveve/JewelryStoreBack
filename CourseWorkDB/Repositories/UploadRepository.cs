@@ -1,4 +1,5 @@
 ﻿using CourseWorkDB.Repositories;
+using System;
 using System.Collections.Concurrent;
 
 namespace FileUploadSample
@@ -26,7 +27,7 @@ namespace FileUploadSample
                 throw new InvalidDataException("File is not a image");
             }
 
-            var id = Guid.NewGuid().ToString().Replace('-', (char)_rnd.Next(32, 127));
+            var id = Guid.NewGuid().ToString().Replace('-', (char)(_rnd.Next(26) + 65));
             var categoryStrId = categoryId.ToString();
             var categoryFolderPath = Path.Combine(_uploadDirectory, categoryStrId);
 

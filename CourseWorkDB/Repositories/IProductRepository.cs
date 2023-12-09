@@ -45,7 +45,7 @@ namespace CourseWorkDB.Repositories
         Task<IEnumerable<SizeInfo>> GetSizeInfosAsync(int productId);
         Task<IEnumerable<AddSizeInfo>> AddSizeInfosAsync(IEnumerable<AddSizeInfo> sizeInfo);
         Task<AddSizeInfo> UpdateSizeInfoAsync(AddSizeInfo sizeInfo);
-        Task<int> RemoveSizeInfoAsync(int sizeInfoId);
+        Task<AddSizeInfo> RemoveSizeInfoAsync(AddSizeInfo size);
 
 
         //MATERIAL 
@@ -70,7 +70,7 @@ namespace CourseWorkDB.Repositories
         Task<IEnumerable<MaterialInfo>> GetMaterialInfosAsync(int productId);
         Task<IEnumerable<AddMaterialInfo>> AddMaterialInfosAsync(IEnumerable<AddMaterialInfo> materialInfos);
         Task<AddMaterialInfo> UpdateMaterialInfoAsync(AddMaterialInfo materialInfo);
-        Task<int> RemoveMaterialInfoAsync(int materialInfoId);
+        Task<AddMaterialInfo> RemoveMaterialInfoAsync(AddMaterialInfo materialInfo);
 
 
         //STONE COLOR
@@ -99,8 +99,7 @@ namespace CourseWorkDB.Repositories
         Task<IEnumerable<StoneInfo>> GetStoneInfosAsync(int productId);
         Task<IEnumerable<AddStoneInfo>> AddStoneInfosAsync(IEnumerable<AddStoneInfo> stoneInfos);
         Task<AddStoneInfo> UpdateStoneInfoAsync(AddStoneInfo stoneInfo);
-        Task<int> RemoveStoneInfoAsync(int stoneInfoId);
-
+        Task<AddStoneInfo> RemoveStoneInfoAsync(AddStoneInfo stoneInfoId);
 
         //Lock Type
 

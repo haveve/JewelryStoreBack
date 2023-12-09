@@ -51,7 +51,7 @@ namespace CourseWorkDB.Repositories
 
         public async Task<ProductPagination> GetProductAsync(ProductSort productSort)
         {
-            string Left = productSort.OnlyDiscount?string.Empty: "LEFT";
+            string Left = productSort.OnlyDiscount ? string.Empty : "LEFT";
 
             string selectForPagination = "SELECT DISTINCT(p.image),p.name,p.category_id,p.creator_id,p.description,p.id,d.[percent] as discount_percent  ";
 
@@ -135,7 +135,7 @@ namespace CourseWorkDB.Repositories
 
                     query.AppendFormat(@" si.stone_type_id in ({0}) {1}"
                     , forParams.ToString().TrimEnd(trimSymbol)
-                    , productSort.StoneShapes is not null|| productSort.StoneColors is not null ? "AND " : string.Empty);
+                    , productSort.StoneShapes is not null || productSort.StoneColors is not null ? "AND " : string.Empty);
 
                     forParams.Clear();
                 }
@@ -170,8 +170,8 @@ namespace CourseWorkDB.Repositories
 
 
             if (productSort.LockTypes is not null
-               || productSort.ShapeTypes is not null) 
-            { 
+               || productSort.ShapeTypes is not null)
+            {
                 query.Append(" JOIN SpecificProductInfo as spi ON p.specific_product_info_id = spi.id AND  ");
 
                 if (productSort.LockTypes is not null)
@@ -205,12 +205,12 @@ namespace CourseWorkDB.Repositories
 
             query.Append(" WHERE p.disabled is distinct from 1");
 
-            if(productSort.CategoryId is not null)
+            if (productSort.CategoryId is not null)
             {
-                query.AppendFormat(" AND category_id = {0} ",productSort.CategoryId);
+                query.AppendFormat(" AND category_id = {0} ", productSort.CategoryId);
             }
 
-            if(productSort.Creators is not null)
+            if (productSort.Creators is not null)
             {
                 foreach (var creator in productSort.Creators)
                 {
@@ -485,7 +485,7 @@ namespace CourseWorkDB.Repositories
         public async Task<AddMaterialInfo> UpdateMaterialInfoAsync(AddMaterialInfo materialInfo)
         {
             using var connection = _dapperContext.CreateConnection();
-            string query = "UPDATE SizeInfo SET [percent] = @Percent WHERE product_id = @ProductId AND material_id = @MaterialId AND @MaterialColorId";
+            string query = "UPDATE MaterialInfo SET [percent] = @Percent WHERE product_id = @ProductId AND material_id = @MaterialId AND material_color_id = @MaterialColorId";
 
             await connection.ExecuteAsync(query, materialInfo).ConfigureAwait(false);
             return materialInfo;
@@ -524,12 +524,13 @@ namespace CourseWorkDB.Repositories
             return await connection.QuerySingleAsync<int>(query, new { sizeId }).ConfigureAwait(false);
         }
 
-        public async Task<int> RemoveSizeInfoAsync(int sizeInfoId)
+        public async Task<AddSizeInfo> RemoveSizeInfoAsync(AddSizeInfo size)
         {
             using var connection = _dapperContext.CreateConnection();
-            string query = "DELETE SizeInfo OUTPUT deleted.id WHERE id = @sizeInfoId";
+            string query = "DELETE SizeInfo WHERE product_id = @ProductId AND size_id = @SizeId";
 
-            return await connection.QuerySingleAsync<int>(query, new { sizeInfoId }).ConfigureAwait(false);
+            await connection.ExecuteAsync(query, size).ConfigureAwait(false);
+            return size;
         }
 
         public async Task<int> RemoveMaterialAsync(int materialId)
@@ -548,12 +549,13 @@ namespace CourseWorkDB.Repositories
             return await connection.QuerySingleAsync<int>(query, new { materialColorId }).ConfigureAwait(false);
         }
 
-        public async Task<int> RemoveMaterialInfoAsync(int materialInfoId)
+        public async Task<AddMaterialInfo> RemoveMaterialInfoAsync(AddMaterialInfo materialInfo)
         {
             using var connection = _dapperContext.CreateConnection();
-            string query = "DELETE MaterialInfo OUTPUT deleted.id WHERE id = @materialInfoId";
+            string query = "DELETE MaterialInfo WHERE product_id = @ProductId AND material_id = @MaterialId AND material_color_id = @MaterialColorId";
 
-            return await connection.QuerySingleAsync<int>(query, new { materialInfoId }).ConfigureAwait(false);
+            await connection.ExecuteAsync(query, materialInfo).ConfigureAwait(false);
+            return materialInfo;
         }
 
 
@@ -703,18 +705,18 @@ namespace CourseWorkDB.Repositories
         public async Task<AddStoneInfo> UpdateStoneInfoAsync(AddStoneInfo stoneInfo)
         {
             using var connection = _dapperContext.CreateConnection();
-            string query = "UPDATE SizeInfo SET weight_carat = @WeighCarat,count = @Count WHERE product_id = @ProductId AND stone_type_id = @StoneTypeId AND stone_shape_id = @StoneShapeId AND stone_color_id = @StoneColorId";
+            string query = "UPDATE StoneInfo SET weight_carat = @WeighCarat,count = @Count WHERE product_id = @ProductId AND stone_type_id = @StoneTypeId AND stone_shape_id = @StoneShapeId AND stone_color_id = @StoneColorId";
             await connection.ExecuteAsync(query, stoneInfo).ConfigureAwait(false);
             return stoneInfo;
         }
 
-        public async Task<int> RemoveStoneInfoAsync(int stoneInfoId)
+        public async Task<AddStoneInfo> RemoveStoneInfoAsync(AddStoneInfo stoneInfoId)
         {
             using var connection = _dapperContext.CreateConnection();
-            string query = "DELETE StoneInfo OUTPUT deleted.id WHERE id = @stoneInfoId";
+            string query = "DELETE StoneInfo WHERE product_id = @ProductId AND stone_type_id = @StoneTypeId AND stone_shape_id = @StoneShapeId AND stone_color_id = @StoneColorId";
 
-            return await connection.QuerySingleAsync<int>(query, new { stoneInfoId }).ConfigureAwait(false);
-
+            await connection.ExecuteAsync(query, new { stoneInfoId }).ConfigureAwait(false);
+            return stoneInfoId;
         }
 
         //Lock Type
@@ -875,7 +877,7 @@ namespace CourseWorkDB.Repositories
 
             var id = await connection.QuerySingleAsync<int>(query, discount).ConfigureAwait(false);
 
-            return new Discount(discount.Start,discount.End,discount.ProductId,discount.Percent,id);
+            return new Discount(discount.Start, discount.End, discount.ProductId, discount.Percent, id);
         }
 
         public async Task<Discount> UpdateDiscountAsync(Discount discount)

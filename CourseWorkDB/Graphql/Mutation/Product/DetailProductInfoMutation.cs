@@ -59,12 +59,12 @@ namespace CourseWorkDB.Graphql.Mutation.Product
                     return await productRepository.UpdateSizeInfoAsync(sizeInfo);
                 });
 
-            Field<IntGraphType>("delete_size_info")
-                .Argument<IntGraphType>("sizeInfoId")
+            Field<AddSizeInfoGraphType>("delete_size_info")
+                .Argument<AddSizeInfoInputGraphType>("data")
                 .ResolveAsync(async context =>
                 {
-                    var sizeInfoId = context.GetArgument<int>("sizeInfoId");
-                    return await productRepository.RemoveSizeInfoAsync(sizeInfoId);
+                    var data = context.GetArgument<AddSizeInfo>("data");
+                    return await productRepository.RemoveSizeInfoAsync(data);
                 });
 
 
@@ -132,12 +132,12 @@ namespace CourseWorkDB.Graphql.Mutation.Product
                     return await productRepository.UpdateMaterialInfoAsync(materialInfo);
                 });
 
-             Field<IntGraphType>("delete_material_info")
-                .Argument<IntGraphType>("materialInfoId")
+             Field<AddMaterialInfoGraphType>("delete_material_info")
+                .Argument<AddMaterialInfoInputGraphType>("data")
                 .ResolveAsync(async context =>
                 {
-                    var materialInfoId = context.GetArgument<int>("materialInfoId");
-                    return await productRepository.RemoveMaterialInfoAsync(materialInfoId);
+                    var data = context.GetArgument<AddMaterialInfo>("data");
+                    return await productRepository.RemoveMaterialInfoAsync(data);
                 });
 
 
@@ -242,12 +242,12 @@ namespace CourseWorkDB.Graphql.Mutation.Product
                     return await productRepository.UpdateStoneInfoAsync(stoneInfo);
                 });
 
-            Field<NonNullGraphType<IntGraphType>>("delete_stone_info")
-                .Argument<NonNullGraphType<IntGraphType>>("id")
+            Field<NonNullGraphType<AddStoneInfoGraphType>>("delete_stone_info")
+                .Argument<NonNullGraphType<AddStoneInfoInputGraphType>>("data")
                 .ResolveAsync(async context =>
                 {
-                    var id = context.GetArgument<int>("id");
-                    return await productRepository.RemoveStoneInfoAsync(id);
+                    var data = context.GetArgument<AddStoneInfo>("data");
+                    return await productRepository.RemoveStoneInfoAsync(data);
                 });
 
 
