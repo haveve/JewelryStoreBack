@@ -17,7 +17,7 @@ namespace CourseWorkDB.Repositories
         Task<SelectedProduct> UpdateProductAsync(SelectedProduct selectedProduct);
         Task<Guid> RemoveSelectedProductAsync(Guid Id,int userId);
 
-        Task<IEnumerable<History>> GetUserHistoryAsync(int userId);
+        Task<IEnumerable<History>> GetUserHistoryAsync(int userId, UserHistorySort userHistorySort);
         Task<UpdateUserHistory> UpdateUserHistoryAsync(UpdateUserHistory data);
 
         Task<string> DeclineOrderAsync(Guid orderId, int userId, bool userRollBack);

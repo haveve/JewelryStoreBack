@@ -57,7 +57,7 @@ namespace CourseWorkDB
 
         public async Task<Guid> RemoveSelectedProductAsync(Guid Id, int userId)
         {
-            string query = $"DELETE FROM SelectedProducts OUTPUT deleted.id where id = @Id AND user_id = @userId AND status_id in ({(int)SelectedStatus.Beloved},{(int)SelectedStatus.InBucket})";
+            string query = $"DELETE FROM SelectedProducts OUTPUT deleted.id where id = @Id AND user_id = @userId";
             using var connection = _dapperContext.CreateConnection();
 
             var data = Guid.Empty;
@@ -116,19 +116,23 @@ namespace CourseWorkDB
 
         }
 
-        public async Task<IEnumerable<History>> GetUserHistoryAsync(int userId)
+        public async Task<IEnumerable<History>> GetUserHistoryAsync(int userId,UserHistorySort userHistorySort)
         {
+
+            var filterByDate = userHistorySort.OrderDate is not null?"WHERE CONVERT(date, h.date) = @OrderDate":string.Empty;
+
             using var connection = _dapperContext.CreateConnection();
-            string query = @"SELECT h.id,h.total_cost,h.address,h.date,sp.count,p.name,p.image,p.disabled,p.category_id FROM History as h
-            JOIN SelectedProducts as sp
-            ON sp.user_id = @userId AND h.id = sp.id
+            string query = $@"SELECT h.id,h.total_cost,h.address,h.date,ord.count,p.name,p.image,p.disabled,p.category_id,s.name as size_name,s.id as size_id FROM History as h
+            JOIN Orders as ord
+            ON ord.user_id = @userId AND h.id = ord.id
             JOIN Size as s
-            ON sp.size_id = s.id
+            ON ord.size_id = s.id
             JOIN Products as p
-            ON sp.product_id = p.id
+            ON ord.product_id = p.id
+            {filterByDate}
             ORDER BY h.date DESC";
 
-            return await connection.QueryAsync<History>(query, new { userId }).ConfigureAwait(false);
+            return await connection.QueryAsync<History>(query, new { userId, userHistorySort.OrderDate }).ConfigureAwait(false);
         }
 
         public async Task<UpdateUserHistory> UpdateUserHistoryAsync(UpdateUserHistory data)
@@ -142,7 +146,7 @@ namespace CourseWorkDB
 
         public async Task<string> DeclineOrderAsync(Guid orderId,int userId, bool userRollBack)
         {
-            string procedure = "USP_RALLBACK_BOUGHT";
+            string procedure = "USP_ROLLBACK_BOUGHT";
             using var connection = _dapperContext.CreateConnection();
 
             return await connection.QuerySingleAsync<string>(procedure, new
@@ -170,7 +174,6 @@ namespace CourseWorkDB
             return await connection.QuerySingleAsync<string>(procedure, new
             {
                 OrderId = Guid.NewGuid(),
-                OrderedStatusId = (int)SelectedStatus.Ordered,
                 ProductIds = dt.AsTableValuedParameter("ProductStatusIds"),
                 Address = address
             }, commandType: CommandType.StoredProcedure);

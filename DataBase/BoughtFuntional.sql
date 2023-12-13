@@ -12,7 +12,6 @@ GO
 CREATE PROCEDURE USP_COMMIT_BOUGHT
 (@ProductIds ProductStatusIds READONLY,
 @OrderId uniqueidentifier ,
-@OrderedStatusId int,
 @Address nvarchar(200))
 AS
 SET XACT_ABORT ON
@@ -77,7 +76,8 @@ WHILE @@FETCH_STATUS = 0
 			END
 
 			UPDATE HISTORY set total_cost += @ProductCost WHERE id = @OrderId
-			UPDATE SelectedProducts SET id = @OrderId,status_id = @OrderedStatusId WHERE id = @Id
+			INSERT INTO Orders(id,count,user_id,product_id,size_id) SELECT @OrderId,count,user_id,product_id,size_id FROM SelectedProducts where id = @Id
+			DELETE SelectedProducts WHERE id = @Id
 		BEGIN TRY
 			UPDATE SizeInfo SET count -= @BoughtCount WHERE size_id = @SizeId AND product_id = @ProductId
 		END TRY
@@ -107,9 +107,7 @@ DEALLOCATE idsCursor
 IF @@TRANCOUNT > 0  
     COMMIT TRANSACTION;
 GO
-
-
-CREATE PROCEDURE USP_RALLBACK_BOUGHT
+CREATE PROCEDURE USP_ROLLBACK_BOUGHT
 @OrderId uniqueidentifier,
 @UserRollback bit,
 @UserId int
@@ -124,7 +122,7 @@ BEGIN TRY
 	DECLARE @orderData DATETIME2(0) 
 	SELECT @orderData = date from History
 
-	IF @UserRollback <> 0 AND (SELECT COUNT(id) FROM SelectedProducts WHERE id = @OrderId AND user_id = @UserId) = 0
+	IF @UserRollback <> 0 AND (SELECT COUNT(id) FROM Orders WHERE id = @OrderId AND user_id = @UserId) = 0
 	BEGIN
 		SELECT 'There is no order with that ID'
 		ROLLBACK TRANSACTION;
@@ -138,27 +136,26 @@ BEGIN TRY
 		return;
 	END
 
-	DELETE FROM History WHERE id = @OrderId
-
-	IF @@ROWCOUNT = 0
-	BEGIN
-		select 'Bought was already rollbacked'
-		ROLLBACK TRANSACTION;
-		RETURN;
-	END
-
 	declare @count int
 	declare @product_id int
 	declare @size_id int
 
-	declare idsCursor CURSOR for SELECT count,product_id,size_id from SelectedProducts
+	declare idsCursor CURSOR for SELECT count,product_id,size_id from Orders
 	WHERE id = @OrderId
 	OPEN idsCursor
-
+	
 	FETCH NEXT FROM idsCursor INTO
 	@count,@product_id,@size_id
-		
-
+	
+	IF @@ROWCOUNT = 0
+	BEGIN
+		CLOSE idsCursor
+		DEALLOCATE idsCursor
+		select 'Bought was already rollbacked'
+		ROLLBACK TRANSACTION;
+		RETURN;
+	END
+	
 	WHILE @@FETCH_STATUS = 0
 	BEGIN
 			UPDATE SizeInfo SET count += @count WHERE product_id = @product_id AND size_id = @size_id
@@ -166,9 +163,11 @@ BEGIN TRY
 			@count,@product_id,@size_id
 	END
 
-	DELETE FROM SelectedProducts
-	WHERE id = @OrderId
-	
+					DELETE FROM Orders
+				WHERE id = @OrderId
+
+	DELETE FROM History WHERE id = @OrderId
+
 	SELECT convert(nvarchar(36), @OrderId)
 END TRY
 BEGIN CATCH  
@@ -197,5 +196,6 @@ EXEC USP_COMMIT_BOUGHT @ProductIds = @Ids, @OrderId = '379fa126-92d5-41b6-bccd-4
 select * from SelectedProducts
 select * from SizeInfo
 SELECT * FROM History
+SELECT * FROM Orders
 
-exec USP_RALLBACK_BOUGHT @OrderId = '379fa126-92d5-41b6-bccd-4bf93fc97e6a',@UserRollBack = 1,@UserId = 4
+exec USP_ROLLBACK_BOUGHT @OrderId = '379fa126-92d5-41b6-bccd-4bf93fc97e6a',@UserRollBack = 1,@UserId = 4

@@ -10,10 +10,11 @@ namespace CourseWorkDB.Repositories
     public interface IProductRepository
     {
         Task<ProductPagination> GetProductAsync(ProductSort productSort);
-        Task<Product> AddProductAsync(AddProduct product);
-        Task<Product> UpdateProductAsync(Product product);
+        Task<DetailsProductInfo> AddProductAsync(AddProduct product);
+        Task<DetailsProductInfo> UpdateProductAsync(DetailsProductInfo product);
         Task<ProductState> ChangeProductStateAsync(int productId, bool disabled);
         Task<int> RemoveProductAsync(int productId);
+        Task<DetailsProductInfo> GetProductDefailsInfo(int productId);
 
 
         Task<Creator> AddCreatorAsync(string name);

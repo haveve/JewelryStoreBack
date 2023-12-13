@@ -16,7 +16,7 @@ namespace CourseWorkDB.Graphql.Mutation.Product
     {
         public ProductMutation(IUploadRepository uploadRepository, IProductRepository productRepository)
         {
-            Field<NonNullGraphType<ProductGraphType>>("add_product")
+            Field<NonNullGraphType<DetailsProductInfoGraphType>>("add_product")
                 .Argument<NonNullGraphType<AddProductInputGraphType>>("product")
                 .Argument<NonNullGraphType<UploadGraphType>>("image")
                 .ResolveAsync(async context =>
@@ -35,12 +35,12 @@ namespace CourseWorkDB.Graphql.Mutation.Product
                         throw;
                     }
                 });
-            Field<NonNullGraphType<ProductGraphType>>("update_product")
-                .Argument<NonNullGraphType<ProductInputGraphType>>("product")
+            Field<NonNullGraphType<DetailsProductInfoGraphType>>("update_product")
+                .Argument<NonNullGraphType<DetailsProductInfoInputGraphType>>("product")
                 .Argument<UploadGraphType>("image")
                 .ResolveAsync(async context =>
                 {
-                    var productData = context.GetArgument<ProductModel>("product");
+                    var productData = context.GetArgument<DetailsProductInfo>("product");
                     var img = context.GetArgument<IFormFile?>("image");
                     
                     var newImg = string.Empty;

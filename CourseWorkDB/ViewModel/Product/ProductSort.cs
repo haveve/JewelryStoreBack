@@ -12,8 +12,10 @@
         public IEnumerable<int>? LockTypes { get; set; }
         public IEnumerable<int>? ShapeTypes { get; set; }
         public bool OnlyDiscount { get; set; } = false;
+        public bool? IsCheaper {  get; set; }
+        public SpecificData? SpecificData { get; set; }
         public int? CategoryId { get; set; }
         public string? Search {  get; set; }
-        public PaginationSort? Pagination { get; set; }
+        public PaginationSort Pagination { get; set; }
     }
 }

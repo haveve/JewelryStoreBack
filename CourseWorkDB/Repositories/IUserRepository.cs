@@ -11,7 +11,7 @@ namespace CourseWorkDB.Repositories
     public interface IUserRepository
     {
         Task<User> AddUser(User user);
-        Task<IEnumerable<LoginUser>> GetUsers();
+        Task<IEnumerable<UserSelfData>> GetUsers(UserSort userSort);
         Task<User?> GetUser(string tel, string password, int iteration);
         Task<int> DisableUser(int id);
         Task<ChangePermission> ChangePermission(ChangePermission changePermission);

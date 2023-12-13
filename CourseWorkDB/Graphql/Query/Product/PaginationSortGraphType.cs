@@ -3,7 +3,7 @@ using GraphQL.Types;
 
 namespace CourseWorkDB.Graphql.Query.Product
 {
-    public class PaginationSortGraphType:InputObjectGraphType<PaginationSort>
+    public class PaginationSortGraphType : InputObjectGraphType<PaginationSort>
     {
         public PaginationSortGraphType()
         {

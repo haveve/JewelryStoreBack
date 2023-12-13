@@ -1,11 +1,12 @@
-﻿using GraphQL.Types;
+﻿using CourseWorkDB.ViewModel.Product;
+using GraphQL.Types;
 using ProductModel = CourseWorkDB.Model.Product;
 
 namespace CourseWorkDB.Graphql.Mutation.Product.ProductCrudTypes
 {
-    public class ProductInputGraphType:InputObjectGraphType<ProductModel>
+    public class DetailsProductInfoInputGraphType : InputObjectGraphType<DetailsProductInfo>
     {
-        public ProductInputGraphType() 
+        public DetailsProductInfoInputGraphType() 
         {
             Field(el => el.Id);
             Field(el => el.Image);

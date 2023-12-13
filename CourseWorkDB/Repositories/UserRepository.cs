@@ -3,6 +3,7 @@ using CourseWorkDB.ViewModel.User;
 using Dapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.VisualBasic;
+using System.Text;
 using TimeTracker.Repositories;
 using TimeTracker.Services;
 
@@ -76,11 +77,23 @@ namespace CourseWorkDB.Repositories
             return id;
         }
 
-        public async Task<IEnumerable<LoginUser>> GetUsers()
+        public async Task<IEnumerable<UserSelfData>> GetUsers(UserSort userSort)
         {
-            string query = "Select full_name,telephone_number,id From Users";
+            StringBuilder query = new StringBuilder("Select full_name,telephone_number,id From Users");
+
+            if(userSort.TelephoneNumber is not null)
+            {
+                query.Append("WHERE telephone_number = @TelephoneNumber");
+            }
+
+            if(userSort.FullName is not null)
+            {
+                query.AppendFormat(" {0} full_name Like '%{1}%'", userSort.TelephoneNumber is null?
+                    "WHERE":"AND",userSort.FullName);   
+            }
+
             using var connection = _dapperContext.CreateConnection();
-            return await connection.QueryAsync<LoginUser>(query);
+            return await connection.QueryAsync<UserSelfData>(query.ToString());
         }
 
         public async Task<ChangePermission> ChangePermission(ChangePermission changePermission)

@@ -8,6 +8,8 @@ using System;
 using CourseWorkDB.Model;
 using CourseWorkDB.ViewModel.Size;
 using CourseWork_DB.Helpers;
+using CourseWorkDB.ViewModel.Product;
+using CourseWorkDB.ViewModel.User;
 
 namespace TimeTracker.Repositories
 {
@@ -24,6 +26,7 @@ namespace TimeTracker.Repositories
             Mapper.SetMapper(typeof(Category));
             Mapper.SetMapper(typeof(Creator));
             Mapper.SetMapper(typeof(Product));
+            Mapper.SetMapper(typeof(DetailsProductInfo));
             Mapper.SetMapper(typeof(Size));
             Mapper.SetMapper(typeof(SizeInfo));
             Mapper.SetMapper(typeof(StoneInfo));
@@ -32,7 +35,7 @@ namespace TimeTracker.Repositories
             Mapper.SetMapper(typeof(UserPermission));
             Mapper.SetMapper(typeof(History));
             Mapper.SetMapper(typeof(SelectedProduct));
-
+            Mapper.SetMapper(typeof(UserSelfData));
 
             SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
             SqlMapper.AddTypeHandler(new TimeOnlyTypeHandler());

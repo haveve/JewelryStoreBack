@@ -135,6 +135,25 @@ CONSTRAINT FK_SelectedProducts_size_id FOREIGN KEY(size_id) REFERENCES Size(id) 
 CONSTRAINT PK_SelectedProducts_id PRIMARY KEY(id,size_id,product_id)
 )
 
+--ORDERs
+
+CREATE TABLE Orders(
+id uniqueidentifier not null,
+count int not null,
+last_status_changed datetime2(0),
+
+user_id int not null,
+product_id int not null,
+size_id int not null,
+
+CONSTRAINT FK_Orders_user_id FOREIGN KEY (user_id) REFERENCES Users(id) ON DELETE NO ACTION,
+CONSTRAINT FK_Orders_product_id FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE NO ACTION,
+CONSTRAINT FK_Orders_size_id FOREIGN KEY(size_id) REFERENCES Size(id) ON DELETE NO ACTION,
+CONSTRAINT FK_Orders_history FOREIGN KEY(id) REFERENCES History(id) ON DELETE NO ACTION,
+
+CONSTRAINT PK_Orders_id PRIMARY KEY(id,size_id,product_id)
+)
+
 --DISCOUNT
 
 CREATE TABLE Discount(
@@ -244,6 +263,8 @@ count int not null
 
 CONSTRAINT FK_SizeInfo_size_id FOREIGN KEY (size_id) REFERENCES Size(id) ON DELETE NO ACTION,
 CONSTRAINT FK_SizeInfo_product_id FOREIGN KEY (product_id) REFERENCES Products(id) ON DELETE NO ACTION,
+CONSTRAINT UQ_SizeInfo_product_id_cost UNIQUE (cost,product_id),
+
 
 CONSTRAINT PK_SizeInfo_product_size_id PRIMARY KEY(product_id,size_id)
 )

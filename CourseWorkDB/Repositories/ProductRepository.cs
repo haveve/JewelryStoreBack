@@ -21,13 +21,13 @@ namespace CourseWorkDB.Repositories
         }
 
 
-        public async Task<Product> AddProductAsync(AddProduct product)
+        public async Task<DetailsProductInfo> AddProductAsync(AddProduct product)
         {
             string query = "INSERT INTO Products(name,description,category_id,creator_id,image,specific_product_info_id) OUTPUT inserted.id VALUES(@Name,@Description,@CategoryId,@CreatorId,@Image,@SpecificProductInfoId)";
             using var connection = _dapperContext.CreateConnection();
             int id = await connection.QuerySingleAsync<int>(query, product).ConfigureAwait(false);
 
-            return new Product(product, id);
+            return new DetailsProductInfo(product, id);
         }
 
         public async Task<ProductState> ChangeProductStateAsync(int productId, bool disabled)
@@ -39,7 +39,7 @@ namespace CourseWorkDB.Repositories
             return new() { Id = productId, Disabled = disabled };
         }
 
-        public async Task<Product> UpdateProductAsync(Product product)
+        public async Task<DetailsProductInfo> UpdateProductAsync(DetailsProductInfo product)
         {
             string query = "UPDATE Products SET name = @Name, description = @Description, image = @Image, specific_product_info_id = @SpecificProductInfoId OUTPUT deleted.image  Where id = @Id";
             using var connection = _dapperContext.CreateConnection();
@@ -48,27 +48,51 @@ namespace CourseWorkDB.Repositories
             return product;
         }
 
+        public async Task<DetailsProductInfo> GetProductDefailsInfo(int productId)
+        {
+            string query = @" DECLARE @DateNow DATE = GETDATE() SELECT p.id,p.image, p.name,p.creator_id,p.category_id,p.description,p.specific_product_info_id, d.[percent] as discount FROM Products as p 
+            LEFT JOIN Discount  as d
+            ON p.id = d.product_id AND start <= @DateNow AND @DateNow <= [end]
+			WHERE p.id = @productId";
+
+            using var connection = _dapperContext.CreateConnection();
+
+            return await connection.QuerySingleAsync<DetailsProductInfo>(query,new {productId }).ConfigureAwait(false);
+        }
 
         public async Task<ProductPagination> GetProductAsync(ProductSort productSort)
         {
             string Left = productSort.OnlyDiscount ? string.Empty : "LEFT";
 
-            string selectForPagination = "SELECT DISTINCT(p.image),p.name,p.category_id,p.creator_id,p.description,p.id,d.[percent] as discount_percent  ";
+            string selectForPagination = @"SELECT p.id,p.image, p.name, Min(COALESCE(s.cost,0)) as MinCost,d.[percent] as discount_percent";
 
             string from = " FROM Products as p ";
 
-            string count = " ,null as AllCount ";
+            string count = " ,null as Count, null as Minimum, null as Maximum ";
 
             string selectForCount = @"
             UNION ALL
-            SELECT null,null,null,null,null,null,null, COUNT(DISTINCT p.image) as AllCount FROM Products as p ";
+            SELECT null,null,null,null,null, COUNT(DISTINCT p.image) as Count, Min(s.cost) as Minimum, Max(s.cost) as Maximum FROM Products as p";
 
             StringBuilder query = new StringBuilder(@$"
+            LEFT JOIN SizeInfo as s ON p.id = s.product_id
             {Left} JOIN Discount  as d
             ON p.id = d.product_id AND start <= @DateNow AND @DateNow <= [end]");
 
             StringBuilder forParams = new StringBuilder();
             char trimSymbol = ',';
+
+            if (productSort.Sizes is not null)
+            {
+                foreach (var size in productSort.Sizes)
+                {
+                    forParams.AppendFormat("{0},", size);
+                }
+
+                query.AppendFormat(@" AND s.size_id in ({0}) ",
+                            forParams.ToString().TrimEnd(trimSymbol));
+                forParams.Clear();
+            }
 
             if (productSort.MaterialColors is not null
                 || productSort.Material is not null)
@@ -103,19 +127,6 @@ namespace CourseWorkDB.Repositories
                     forParams.Clear();
                 }
 
-            }
-
-            if (productSort.Sizes is not null)
-            {
-                foreach (var size in productSort.Sizes)
-                {
-                    forParams.AppendFormat("{0},", size);
-                }
-
-                query.AppendFormat(@" JOIN SizeInfo as s
-                            ON p.id = s.product_id AND s.size_id in ({0})",
-                            forParams.ToString().TrimEnd(trimSymbol));
-                forParams.Clear();
             }
 
             if (productSort.StoneShapes is not null
@@ -224,35 +235,51 @@ namespace CourseWorkDB.Repositories
 
             if (productSort.Search is not null)
             {
-                query.AppendFormat(" AND p.name LIKE '%{0}%' or description LIKE '%{0}%'", productSort.Search);
+                query.AppendFormat(" AND (CONTAINS(p.name,'{0}') OR CONTAINS(p.description,'{0}') )", productSort.Search);
+            }
+
+            if (productSort.SpecificData is not null)
+            {
+                query.AppendFormat(" AND s.cost between {0} and {1} ", productSort.SpecificData.Minimum,
+                    productSort.SpecificData.Maximum);
             }
 
             string queryForCount = selectForCount + query.ToString();
 
             string queryPagination = string.Empty;
 
-            if (productSort.Pagination is not null)
+            if (productSort.IsCheaper is not null)
             {
-                queryPagination = string.Format(" DECLARE @DateNow DATE = GETDATE() SELECT DISTINCT(p.image),p.name,p.category_id,p.creator_id,p.description,p.id,p.discount_percent {3} FROM ({2} ORDER BY p.id OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY) as p ",
-                    productSort.Pagination.Skip, productSort.Pagination.Take, selectForPagination + from + query.ToString(), count, from);
+                query.AppendFormat(" GROUP By p.id,p.image,p.name,d.[percent] ORDER BY minCost {0} ", (bool)productSort.IsCheaper ? "ASC" : "DSC");
             }
             else
             {
-                queryPagination = " DECLARE @DateNow DATE = GETDATE() " + selectForPagination + count + from + query.ToString();
+                query.AppendFormat(" GROUP By p.id,p.image,p.name,d.[percent] ORDER BY minCost ASC ");
             }
+
+
+             string pagination = string.Format("OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", productSort.Pagination.Skip, productSort.Pagination.Take);
+            
+
+            queryPagination = string.Format(" DECLARE @DateNow DATE = GETDATE() SELECT id,image, name,MinCost, discount_percent {1} FROM ({0} {2}) as p ", 
+                selectForPagination + from + query.ToString(), count,pagination);
+
+
             using var connection = _dapperContext.CreateConnection();
 
             ProductPagination result = new ProductPagination();
 
-            result.Products = (await connection.QueryAsync<Product?, int?, Product?>(queryPagination + queryForCount, (p, count) =>
+            string efrg = queryPagination + queryForCount;
+
+            result.Products = (await connection.QueryAsync<Product?, SpecificData?, Product?>(queryPagination + queryForCount, (p, specInfo) =>
             {
-                if (count is not null)
+                if (specInfo is not null)
                 {
-                    result.Count = (int)count;
+                    result.SpecificData = specInfo;
                 }
 
                 return p;
-            }, splitOn: "AllCount").ConfigureAwait(false)).SkipLast(1)!;
+            }, splitOn: "Count").ConfigureAwait(false)).SkipLast(1)!;
 
             return result;
         }

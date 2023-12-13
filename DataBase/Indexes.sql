@@ -1,3 +1,8 @@
+--User
+
+CREATE INDEX IX_User_full_name ON Users(full_name)
+INCLUDE(telephone_number,password,salt,id,disabled)
+
 --SpecificProductInfo
 
 CREATE INDEX IX_SpecificProductInfo_lock_type_id on SpecificProductInfo(lock_type_id)
@@ -13,6 +18,16 @@ include(id,name,image,description,disabled)
 
 CREATE INDEX IX_Products_specific_product_info_id on Products(specific_product_info_id)
 include(id,name,image,description,disabled)
+
+
+CREATE FULLTEXT CATALOG DefaultCatalor AS DEFAULT;
+
+CREATE FULLTEXT INDEX ON Products(
+name LANGUAGE 1058,
+description LANGUAGE 1058)
+   KEY INDEX PK_Product_id
+   WITH STOPLIST = SYSTEM;
+GO
 
 --SelectedProducts
 
@@ -32,6 +47,9 @@ include(id,count,last_status_changed)
 
 CREATE INDEX IX_Discount_product_id on Discount(product_id)
 include(id,start,[end],[percent])
+
+CREATE INDEX IX_Discount_percent on Discount([percent])
+include(id,start,[end],product_id)
 
 --StoneInfo
 
@@ -61,8 +79,16 @@ include([percent])
 
 --SizeInfo
 
-CREATE INDEX IX_SizeInfo_material_color_id on SizeInfo(product_id)
+CREATE INDEX IX_SizeInfo_color_id on SizeInfo(product_id)
 include(cost,weight_gram,count)
 
-CREATE INDEX IX_SizeInfo_material_size_id on SizeInfo(size_id)
+CREATE INDEX IX_SizeInfo_size_id on SizeInfo(size_id)
 include(cost,weight_gram,count)
+
+CREATE INDEX IX_SizeInfo_cost on SizeInfo(cost)
+include(weight_gram,count)
+
+--HISTORY
+
+CREATE INDEX IX_History_date ON History(date)
+INCLUDE(id,total_cost,address)

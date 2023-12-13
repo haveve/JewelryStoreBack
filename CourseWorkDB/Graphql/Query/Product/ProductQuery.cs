@@ -28,6 +28,14 @@ namespace CourseWorkDB.Graphql.Query.Product
                     var searchProduct = context.GetArgument<ProductSort>("searchProduct");
                     return await productRepository.GetProductAsync(searchProduct);
                 });
+
+           Field<NonNullGraphType<DetailsProductInfoGraphType>>("get_product_detail")
+                .Argument<NonNullGraphType<IntGraphType>>("productId")
+                .ResolveAsync(async context =>
+                {
+                    var id = context.GetArgument<int>("productId");
+                    return await productRepository.GetProductDefailsInfo(id);
+                });
         }
     }
 }

@@ -8,8 +8,8 @@ namespace CourseWorkDB.Graphql.Query.Product
     {
         public ProductPaginationGraphType()
         {
-            Field(el => el.Count);
             Field(el => el.Products,type: typeof(ListGraphType<ProductGraphType>));
+            Field(el => el.SpecificData, type: typeof(SpecificDataGraphType));
         }
     }
 }

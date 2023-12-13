@@ -23,7 +23,6 @@ namespace CourseWorkDB.Model
     public enum SelectedStatus
     {
         Beloved = 1,
-        InBucket,
-        Ordered
+        InBucket
     }
 }

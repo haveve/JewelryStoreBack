@@ -22,5 +22,9 @@ namespace CourseWorkDB.Model
         public string Address { get; set; }
         [Description("date")]
         public DateTime Date { get; set; }
+        [Description("size_name")]
+        public string SizeName { get; set; }
+        [Description("size_id")]
+        public int SizeId {  get; set; }
     }
 }

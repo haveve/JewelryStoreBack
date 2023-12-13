@@ -3,26 +3,17 @@ using System.ComponentModel;
 
 namespace CourseWorkDB.Model
 {
-    public class Product: AddProduct
+    public class Product
     {
         [Description("id")]
         public int Id { get; set; }
+        [Description("name")]
+        public string Name { get; set; }
+        [Description("image")]
+        public string Image { get; set; }
+        [Description("MinCost")]
+        public decimal MinCost { get; set; }
         [Description("discount_percent")]
         public int? Discount { get; set; }
-
-        public Product()
-        {
-
-        }
-
-        public Product(AddProduct product,int id = 0)
-        {
-            Image = product.Image;
-            Name = product.Name;
-            CategoryId = product.CategoryId;
-            CreatorId = product.CreatorId;
-            Description = product.Description;
-            Id = id;
-        }
     }
 }
