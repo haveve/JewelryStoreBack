@@ -15,5 +15,7 @@ namespace CourseWorkDB.Model
         public decimal MinCost { get; set; }
         [Description("discount_percent")]
         public int? Discount { get; set; }
+        [Description("category_id")]
+        public int CategoryId {  get; set; }
     }
 }

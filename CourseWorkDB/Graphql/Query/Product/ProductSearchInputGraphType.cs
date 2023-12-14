@@ -19,7 +19,7 @@ namespace CourseWorkDB.Graphql.Query.Product
             Field(el => el.LockTypes, nullable: true);
             Field(el => el.ShapeTypes, nullable: true);
             Field(el => el.OnlyDiscount, nullable: true);
-            Field(el => el.Pagination, type:typeof(PaginationSortGraphType));
+            Field(el => el.Pagination,nullable:false,type:typeof(NonNullGraphType<PaginationSortGraphType>));
             Field(el => el.SpecificData, nullable: true, type:typeof(SpecificDataInputGraphType));
             Field(el => el.IsCheaper, nullable: true);
         }

@@ -12,6 +12,7 @@ namespace CourseWorkDB.Graphql.Query.Product
             Field(el => el.MinCost);
             Field(el => el.Name);
             Field(el => el.Image);
+            Field(el => el.CategoryId);
         }
     }
 }

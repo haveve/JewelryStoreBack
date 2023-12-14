@@ -64,7 +64,7 @@ namespace CourseWorkDB.Repositories
         {
             string Left = productSort.OnlyDiscount ? string.Empty : "LEFT";
 
-            string selectForPagination = @"SELECT p.id,p.image, p.name, Min(COALESCE(s.cost,0)) as MinCost,d.[percent] as discount_percent";
+            string selectForPagination = @"SELECT p.id,p.image, p.name,p.category_id, Min(COALESCE(s.cost,0)) as MinCost,d.[percent] as discount_percent";
 
             string from = " FROM Products as p ";
 
@@ -72,7 +72,7 @@ namespace CourseWorkDB.Repositories
 
             string selectForCount = @"
             UNION ALL
-            SELECT null,null,null,null,null, COUNT(DISTINCT p.image) as Count, Min(s.cost) as Minimum, Max(s.cost) as Maximum FROM Products as p";
+            SELECT null,null,null,null,null,null, COUNT(DISTINCT p.image) as Count, Min(s.cost) as Minimum, Max(s.cost) as Maximum FROM Products as p";
 
             StringBuilder query = new StringBuilder(@$"
             LEFT JOIN SizeInfo as s ON p.id = s.product_id
@@ -250,18 +250,16 @@ namespace CourseWorkDB.Repositories
 
             if (productSort.IsCheaper is not null)
             {
-                query.AppendFormat(" GROUP By p.id,p.image,p.name,d.[percent] ORDER BY minCost {0} ", (bool)productSort.IsCheaper ? "ASC" : "DSC");
+                query.AppendFormat(" GROUP By p.id,p.image,p.name,p.category_id,d.[percent] ORDER BY minCost {0} ", (bool)productSort.IsCheaper ? "ASC" : "DSC");
             }
             else
             {
-                query.AppendFormat(" GROUP By p.id,p.image,p.name,d.[percent] ORDER BY minCost ASC ");
+                query.AppendFormat(" GROUP By p.id,p.image,p.name,p.category_id,d.[percent] ORDER BY minCost ASC ");
             }
 
+            string pagination = string.Format("OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", productSort.Pagination.Skip, productSort.Pagination.Take);
 
-             string pagination = string.Format("OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", productSort.Pagination.Skip, productSort.Pagination.Take);
-            
-
-            queryPagination = string.Format(" DECLARE @DateNow DATE = GETDATE() SELECT id,image, name,MinCost, discount_percent {1} FROM ({0} {2}) as p ", 
+            queryPagination = string.Format(" DECLARE @DateNow DATE = GETDATE() SELECT id,image,category_id,name,MinCost, discount_percent {1} FROM ({0} {2}) as p ", 
                 selectForPagination + from + query.ToString(), count,pagination);
 
 
