@@ -132,6 +132,7 @@ CONSTRAINT FK_SelectedProducts_product_id FOREIGN KEY (product_id) REFERENCES Pr
 CONSTRAINT FK_SelectedProducts_status_id FOREIGN KEY (status_id) REFERENCES SelectedProductsStatus(id) ON DELETE NO ACTION,
 CONSTRAINT FK_SelectedProducts_size_id FOREIGN KEY(size_id) REFERENCES Size(id) ON DELETE NO ACTION,
 
+CONSTRAINT UQ_SelectedProducts UNIQUE(status_id,user_id,product_id,size_id),
 CONSTRAINT PK_SelectedProducts_id PRIMARY KEY(id,size_id,product_id)
 )
 
