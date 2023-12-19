@@ -63,7 +63,8 @@ namespace CourseWorkDB.Repositories
         public async Task<ProductPagination> GetProductAsync(ProductSort productSort)
         {
             string Left = productSort.OnlyDiscount ? string.Empty : "LEFT";
-
+            string LeftSize = productSort.Sizes is null ? "Left" : string.Empty;
+            
             string selectForPagination = @"SELECT p.id,p.image, p.name,p.category_id, Min(COALESCE(s.cost,0)) as MinCost,d.[percent] as discount_percent";
 
             string from = " FROM Products as p ";
@@ -75,9 +76,9 @@ namespace CourseWorkDB.Repositories
             SELECT null,null,null,null,null,null, COUNT(DISTINCT p.image) as Count, Min(s.cost) as Minimum, Max(s.cost) as Maximum FROM Products as p";
 
             StringBuilder query = new StringBuilder(@$"
-            LEFT JOIN SizeInfo as s ON p.id = s.product_id
             {Left} JOIN Discount  as d
-            ON p.id = d.product_id AND start <= @DateNow AND @DateNow <= [end]");
+            ON p.id = d.product_id AND start <= @DateNow AND @DateNow <= [end]
+            {LeftSize} JOIN SizeInfo as s ON p.id = s.product_id");
 
             StringBuilder forParams = new StringBuilder();
             char trimSymbol = ',';
@@ -133,7 +134,7 @@ namespace CourseWorkDB.Repositories
             || productSort.StoneColors is not null
             || productSort.StoneTypes is not null)
             {
-                query.Append(@"JOIN StoneInfo as si
+                query.Append(@" JOIN StoneInfo as si
                             ON p.id = si.product_id AND 
                          ");
 
@@ -267,9 +268,9 @@ namespace CourseWorkDB.Repositories
 
             ProductPagination result = new ProductPagination();
 
-            string efrg = queryPagination + queryForCount;
+            string queryStr = queryPagination + queryForCount;
 
-            result.Products = (await connection.QueryAsync<Product?, SpecificData?, Product?>(queryPagination + queryForCount, (p, specInfo) =>
+            result.Products = (await connection.QueryAsync<Product?, SpecificData?, Product?>(queryStr, (p, specInfo) =>
             {
                 if (specInfo is not null)
                 {

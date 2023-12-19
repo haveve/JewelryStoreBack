@@ -107,6 +107,13 @@ DEALLOCATE idsCursor
 IF @@TRANCOUNT > 0  
     COMMIT TRANSACTION;
 GO
+
+
+
+
+
+
+
 CREATE PROCEDURE USP_ROLLBACK_BOUGHT
 @OrderId uniqueidentifier,
 @UserRollback bit,

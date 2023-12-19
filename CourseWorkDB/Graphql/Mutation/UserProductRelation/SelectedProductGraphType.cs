@@ -14,7 +14,7 @@ namespace CourseWorkDB.Graphql.Mutation.UserProductRelation
             Field(el => el.Count);
             Field(el => el.StatusId);
             Field(el => el.Id);
-            Field(el => el.Persent);
+            Field(el => el.Present);
         }
     }
 }

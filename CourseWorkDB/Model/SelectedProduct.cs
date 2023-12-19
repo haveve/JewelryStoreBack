@@ -17,7 +17,7 @@ namespace CourseWorkDB.Model
         [Description("status_id")]
         public int StatusId { get; set; } = 1;
         [Description("present")]
-        public bool Persent { get; set; } = false; 
+        public bool Present { get; set; } = false; 
     }
 
     public enum SelectedStatus
