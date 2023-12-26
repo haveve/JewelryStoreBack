@@ -1,6 +1,6 @@
 ﻿using CourseWorkDB.Graphql.Mutation.Product.ProductCrudTypes;
 using CourseWorkDB.Graphql.Mutation.Product.StoneInfoCrud;
-using CourseWorkDB.Model;
+using CourseWorkDB.Model.ProductInfo;
 using CourseWorkDB.Repositories;
 using CourseWorkDB.ViewModel.Product;
 using FileUploadSample;
@@ -8,7 +8,7 @@ using GraphQL;
 using GraphQL.Types;
 using GraphQL.Upload.AspNetCore;
 using Microsoft.Extensions.FileProviders;
-using ProductModel = CourseWorkDB.Model.Product;
+using ProductModel = CourseWorkDB.Model.ProductInfo.Product;
 
 namespace CourseWorkDB.Graphql.Mutation.Product
 {

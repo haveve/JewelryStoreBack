@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.DetailsInfo.Material;
 using GraphQL.Types;
 
 namespace CourseWorkDB.Graphql.Mutation.Product.MaterialInfoCrud

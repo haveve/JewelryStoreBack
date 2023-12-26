@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.DetailsInfo.Size;
 using GraphQL.Types;
 
 namespace CourseWorkDB.Graphql.Mutation.Product.SizeInfoCrudTypes

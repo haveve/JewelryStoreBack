@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CourseWorkDB.Model
+namespace CourseWorkDB.Model.UserProduct
 {
     public class History
     {
@@ -17,7 +17,7 @@ namespace CourseWorkDB.Model
         [Description("disabled")]
         public bool Disabled { get; set; }
         [Description("category_id")]
-        public int CategoryId {  get; set; }
+        public int CategoryId { get; set; }
         [Description("address")]
         public string Address { get; set; }
         [Description("date")]
@@ -25,6 +25,6 @@ namespace CourseWorkDB.Model
         [Description("size_name")]
         public string SizeName { get; set; }
         [Description("size_id")]
-        public int SizeId {  get; set; }
+        public int SizeId { get; set; }
     }
 }

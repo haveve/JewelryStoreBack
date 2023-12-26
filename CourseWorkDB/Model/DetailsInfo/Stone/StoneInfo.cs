@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CourseWorkDB.Model
+namespace CourseWorkDB.Model.DetailsInfo.Stone
 {
     public class StoneInfo
     {
@@ -8,7 +8,7 @@ namespace CourseWorkDB.Model
         public StoneType Type { get; set; }
         public StoneShape Shape { get; set; }
         [Description("weight_carat")]
-        public decimal WeightCarat {  get; set; }
+        public decimal WeightCarat { get; set; }
         [Description("count")]
         public int Count { get; set; }
     }

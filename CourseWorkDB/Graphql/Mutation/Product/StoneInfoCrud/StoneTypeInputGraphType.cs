@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.DetailsInfo.Stone;
 using GraphQL.Types;
 
 namespace CourseWorkDB.Graphql.Mutation.Product.StoneInfoCrud

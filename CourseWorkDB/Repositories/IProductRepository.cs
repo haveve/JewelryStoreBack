@@ -1,4 +1,8 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.DetailsInfo.Material;
+using CourseWorkDB.Model.DetailsInfo.Size;
+using CourseWorkDB.Model.DetailsInfo.SpecificInfo;
+using CourseWorkDB.Model.DetailsInfo.Stone;
+using CourseWorkDB.Model.ProductInfo;
 using CourseWorkDB.ViewModel.Discount;
 using CourseWorkDB.ViewModel.Material;
 using CourseWorkDB.ViewModel.Product;

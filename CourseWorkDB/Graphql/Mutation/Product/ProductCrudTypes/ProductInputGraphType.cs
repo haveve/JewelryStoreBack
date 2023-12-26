@@ -1,6 +1,6 @@
 ﻿using CourseWorkDB.ViewModel.Product;
 using GraphQL.Types;
-using ProductModel = CourseWorkDB.Model.Product;
+using ProductModel = CourseWorkDB.Model.ProductInfo.Product;
 
 namespace CourseWorkDB.Graphql.Mutation.Product.ProductCrudTypes
 {

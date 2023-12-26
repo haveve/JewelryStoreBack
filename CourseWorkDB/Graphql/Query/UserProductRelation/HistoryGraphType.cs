@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.UserProduct;
 using GraphQL.Types;
 
 namespace CourseWorkDB.Graphql.Query.UserProductRelation

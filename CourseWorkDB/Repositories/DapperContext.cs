@@ -1,15 +1,19 @@
-﻿using  Microsoft.Data.SqlClient;
+﻿using Microsoft.Data.SqlClient;
 using System.Data;
 using System.ComponentModel;
 using System.Reflection;
 using Dapper;
 using WebSocketGraphql.Services;
 using System;
-using CourseWorkDB.Model;
 using CourseWorkDB.ViewModel.Size;
 using CourseWork_DB.Helpers;
 using CourseWorkDB.ViewModel.Product;
 using CourseWorkDB.ViewModel.User;
+using CourseWorkDB.Model.DetailsInfo.Size;
+using CourseWorkDB.Model.DetailsInfo.Stone;
+using CourseWorkDB.Model.ProductInfo;
+using CourseWorkDB.Model.User;
+using CourseWorkDB.Model.UserProduct;
 
 namespace TimeTracker.Repositories
 {

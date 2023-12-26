@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.User;
 using GraphQL.Types;
 
 namespace CourseWorkDB.Graphql.Mutation.User

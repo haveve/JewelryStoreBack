@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CourseWorkDB.Model
+namespace CourseWorkDB.Model.User
 {
     public class User
     {
@@ -9,11 +9,11 @@ namespace CourseWorkDB.Model
         [Description("full_name")]
         public string FullName { get; set; }
         [Description("telephone_number")]
-        public string TelephoneNumber {get;set;}
+        public string TelephoneNumber { get; set; }
         [Description("password")]
-        public string Password { get; set;}
+        public string Password { get; set; }
         [Description("salt")]
-        public string Salt { get; set;}
-        public UserPermission Permissions { get; set;}
+        public string Salt { get; set; }
+        public UserPermission Permissions { get; set; }
     }
 }

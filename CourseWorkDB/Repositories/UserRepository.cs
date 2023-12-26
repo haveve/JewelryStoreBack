@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.User;
 using CourseWorkDB.ViewModel.User;
 using Dapper;
 using Microsoft.AspNetCore.Identity;

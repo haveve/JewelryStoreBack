@@ -1,6 +1,6 @@
 ﻿using CourseWorkDB.Graphql.Mutation.Product.SpecificProductInfo;
 using CourseWorkDB.Helpers;
-using CourseWorkDB.Model;
+using CourseWorkDB.Model.UserProduct;
 using CourseWorkDB.Repositories;
 using CourseWorkDB.ViewModel.History;
 using GraphQL;

@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.UserProduct;
 using CourseWorkDB.Repositories;
 using CourseWorkDB.ViewModel.History;
 using Dapper;

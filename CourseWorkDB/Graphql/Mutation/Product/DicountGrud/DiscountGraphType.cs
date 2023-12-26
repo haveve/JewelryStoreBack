@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.ProductInfo;
 using CourseWorkDB.ViewModel.Discount;
 using GraphQL.Types;
 

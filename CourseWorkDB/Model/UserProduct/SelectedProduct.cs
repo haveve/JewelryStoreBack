@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CourseWorkDB.Model
+namespace CourseWorkDB.Model.UserProduct
 {
     public class SelectedProduct
     {
@@ -17,7 +17,7 @@ namespace CourseWorkDB.Model
         [Description("status_id")]
         public int StatusId { get; set; } = 1;
         [Description("present")]
-        public bool Present { get; set; } = false; 
+        public bool Present { get; set; } = false;
     }
 
     public enum SelectedStatus

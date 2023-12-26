@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.UserProduct;
 using CourseWorkDB.ViewModel.History;
 using System.Data;
 using TimeTracker.Repositories;

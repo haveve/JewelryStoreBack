@@ -1,10 +1,10 @@
 ﻿using System.ComponentModel;
 
-namespace CourseWorkDB.Model
+namespace CourseWorkDB.Model.DetailsInfo.Size
 {
     public class SizeInfo
     {
-        public Size Size {  get; set; }
+        public Size Size { get; set; }
         [Description("cost")]
         public decimal Cost { get; set; }
         [Description("count")]

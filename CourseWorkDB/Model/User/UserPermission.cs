@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace CourseWorkDB.Model
+namespace CourseWorkDB.Model.User
 {
     public class UserPermission
     {

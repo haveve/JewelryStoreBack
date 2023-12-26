@@ -1,9 +1,9 @@
 ﻿using CourseWorkDB.ViewModel.Discount;
 using System.ComponentModel;
 
-namespace CourseWorkDB.Model
+namespace CourseWorkDB.Model.ProductInfo
 {
-    public class Discount: AddDiscount
+    public class Discount : AddDiscount
     {
         [Description("id")]
         public int Id { get; set; }
@@ -13,7 +13,7 @@ namespace CourseWorkDB.Model
 
         }
 
-        public Discount(DateOnly start, DateOnly end,int productId, int percent,int id)
+        public Discount(DateOnly start, DateOnly end, int productId, int percent, int id)
         {
             Start = start;
             End = end;

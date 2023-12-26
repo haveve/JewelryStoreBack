@@ -1,4 +1,4 @@
-﻿using CourseWorkDB.Model;
+﻿using CourseWorkDB.Model.User;
 
 namespace CourseWorkDB.ViewModel.User
 {

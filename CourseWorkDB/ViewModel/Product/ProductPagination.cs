@@ -2,7 +2,7 @@
 {
     public class ProductPagination
     {
-        public IEnumerable<CourseWorkDB.Model.Product> Products { get; set; }
+        public IEnumerable<Model.ProductInfo.Product> Products { get; set; }
         public SpecificData SpecificData { get; set; }
     }
 }
