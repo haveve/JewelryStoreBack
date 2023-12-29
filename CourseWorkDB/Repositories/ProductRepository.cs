@@ -61,14 +61,14 @@ namespace CourseWorkDB.Repositories
 
             using var connection = _dapperContext.CreateConnection();
 
-            return await connection.QuerySingleAsync<DetailsProductInfo>(query,new {productId }).ConfigureAwait(false);
+            return await connection.QuerySingleAsync<DetailsProductInfo>(query, new { productId }).ConfigureAwait(false);
         }
 
         public async Task<ProductPagination> GetProductAsync(ProductSort productSort)
         {
             string Left = productSort.OnlyDiscount ? string.Empty : "LEFT";
             string LeftSize = productSort.Sizes is null ? "Left" : string.Empty;
-            
+
             string selectForPagination = @"SELECT p.id,p.image, p.name,p.category_id, Min(COALESCE(s.cost,0)) as MinCost,d.[percent] as discount_percent";
 
             string from = " FROM Products as p ";
@@ -240,7 +240,7 @@ namespace CourseWorkDB.Repositories
 
             if (productSort.Search is not null)
             {
-                query.AppendFormat(" AND (CONTAINS(p.name,'{0}') OR CONTAINS(p.description,'{0}') )", productSort.Search);
+                query.Append(" AND (CONTAINS(p.name,@Search) OR CONTAINS(p.description,@Search) )");
             }
 
             if (productSort.SpecificData is not null)
@@ -253,19 +253,13 @@ namespace CourseWorkDB.Repositories
 
             string queryPagination = string.Empty;
 
-            if (productSort.IsCheaper is not null)
-            {
-                query.AppendFormat(" GROUP By p.id,p.image,p.name,p.category_id,d.[percent] ORDER BY minCost {0} ", (bool)productSort.IsCheaper ? "ASC" : "DSC");
-            }
-            else
-            {
-                query.AppendFormat(" GROUP By p.id,p.image,p.name,p.category_id,d.[percent] ORDER BY minCost ASC ");
-            }
+
+            query.AppendFormat(" GROUP By p.id,p.image,p.name,p.category_id,d.[percent] ORDER BY minCost {0} ", (bool)(productSort.IsCheaper ?? false) ? "ASC" : "DESC");
 
             string pagination = string.Format("OFFSET {0} ROWS FETCH NEXT {1} ROWS ONLY", productSort.Pagination.Skip, productSort.Pagination.Take);
 
-            queryPagination = string.Format(" DECLARE @DateNow DATE = GETDATE() SELECT id,image,category_id,name,MinCost, discount_percent {1} FROM ({0} {2}) as p ", 
-                selectForPagination + from + query.ToString(), count,pagination);
+            queryPagination = string.Format(" DECLARE @DateNow DATE = GETDATE() SELECT id,image,category_id,name,MinCost, discount_percent {1} FROM ({0} {2}) as p ",
+                selectForPagination + from + query.ToString(), count, pagination);
 
 
             using var connection = _dapperContext.CreateConnection();
@@ -282,7 +276,7 @@ namespace CourseWorkDB.Repositories
                 }
 
                 return p;
-            }, splitOn: "Count").ConfigureAwait(false)).SkipLast(1)!;
+            }, param: new { productSort.Search }, splitOn: "Count").ConfigureAwait(false)).SkipLast(1)!;
 
             return result;
         }
