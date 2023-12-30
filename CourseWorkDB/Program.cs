@@ -5,8 +5,10 @@ using FileUploadSample;
 using GraphQL;
 using GraphQL.MicrosoftDI;
 using GraphQL.Types;
+using GraphQL.Validation.Rules;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TimeTracker.Repositories;
+using WebSocketGraphql.GraphQl.ValidationRules;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +56,9 @@ builder.Services.AddGraphQL(c =>
                                           setting.AddPolicy("Authorized", p => p.RequireAuthenticatedUser());   
                                       })
     .AddErrorInfoProvider(opt => opt.ExposeExceptionDetails = true)
+    .AddValidationRule<InputAndArgumentEmailValidationRule>()
+    .AddValidationRule<InputAndArgumentNumberValidationRule>()
+    .AddValidationRule<InputFieldsAndArgumentsOfCorrectLength>()
     .AddSystemTextJson();
 });
 

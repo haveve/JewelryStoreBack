@@ -7,8 +7,8 @@ namespace CourseWorkDB.Graphql.Query.Product
     {
         public SpecificDataInputGraphType()
         {
-            Field(el => el.Maximum);
-            Field(el => el.Minimum);
+            Field(el => el.Maximum).Directive("constraint_number", "min", 0);
+            Field(el => el.Minimum).Directive("constraint_number", "min", 0);
         }
     }
 }

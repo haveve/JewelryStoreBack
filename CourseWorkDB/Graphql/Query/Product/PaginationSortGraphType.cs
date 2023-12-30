@@ -7,8 +7,8 @@ namespace CourseWorkDB.Graphql.Query.Product
     {
         public PaginationSortGraphType()
         {
-            Field(el => el.Skip);
-            Field(el => el.Take);
+            Field(el => el.Skip).Directive("constraint_number","min",0);
+            Field(el => el.Take).Directive("constraint_number","min",1);
         }
     }
 }
